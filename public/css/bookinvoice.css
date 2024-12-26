@@ -1,0 +1,416 @@
+.navbar {
+    width: 100%;
+    height: 60px; 
+    padding: 20px 6%;
+    display: flex;
+    justify-content: space-between;
+    position: fixed; 
+    top: 0; 
+    z-index: 1000; 
+    font-size: 14px;
+    color: white;
+    background-color: rgb(72, 109, 245);
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.navbar-left {
+    display: flex;
+    align-items: center;
+    gap: 100px;
+}
+
+.navbar-left img {
+    width: 210px;
+}
+
+.navbar-left ul {
+    display: flex;
+    list-style: none;
+    gap: 40px;
+}
+
+.navbar-left ul li a{
+    font-size: 2rem;
+    font-weight: 500;
+    color: #fff;
+}
+
+.navbar-left ul li a:hover {
+    text-decoration: underline;
+}
+
+.navbar-right {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 40px;
+}
+
+
+.navbar-right button{ 
+    width: 90px;
+    height: 40px;
+    background-color: white;
+    border-radius: 20px;
+    border: none;
+    outline: none;
+}
+
+.navbar-right button:hover  {
+    opacity: 0.8;
+}
+
+.logout a {
+    padding: 10px 12px;
+}
+
+.logout:hover a{
+    color: black;
+}
+
+.navbar-right button a {
+    font-size: 1.4rem;
+    font-weight: 500;
+    color: #000;
+}
+
+/* home empty */ 
+.book-entry-form {
+    background-color: #72C2AE;
+    color: white;
+    font-size: 2rem;
+    font-weight: 500;
+    height: 60px; 
+    display: flex;
+    align-items: center;
+    padding: 0 90px;
+    margin-top: 60px; 
+}
+
+.book-entry-form h2 {
+    margin: 0; 
+}
+
+/* Customer Section */
+.customer-section {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-top: 26px;
+    margin-bottom: 26px;
+    padding: 0 6%;
+}
+
+.date {
+    padding: 10px 6%;
+}
+
+.date ,
+.customer-section h3 {
+    font-weight: 700;
+}
+
+.customer {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    position: relative;
+}
+.customer-debt{
+    display: flex;
+    align-items: center;
+    gap: 10px;
+
+}
+
+
+.date {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.date-picker {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.date-picker img {
+    width: 35px;
+}
+
+/* Date Table */
+.date-section {
+    margin-top: 26px;
+    margin-bottom: 26px;
+    padding: 0 6%;
+    font-weight: 700;
+}
+
+.table-container {
+    width: 100%;
+    overflow-x: auto;
+    padding: 0 6%;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+table th, table td {
+    padding: 10px;
+    text-align: left;
+    border: 1px solid #ddd;
+}
+
+table thead {
+    background-color: #B9B9B9;
+}
+
+table tbody tr:nth-child(odd) {
+    background-color: #f9f9f9;
+}
+
+table tbody tr:nth-child(even) {
+    background-color: #fff;
+}
+
+input[type="text"], input[type="number"] {
+    width: 100%;
+    padding: 8px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    box-sizing: border-box;
+}
+
+.add-row-btn {
+    margin-top: 16px;
+    background-color: #72C2AE;
+    color: white;
+    font-size: 2rem;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    width: 5%;
+    text-align: center;
+    font-weight: bold;
+}
+
+.add-row-btn:hover {
+    background-color: #5fa68d;
+}
+
+.done-btn {
+    background-color: #72C2AE; 
+    color: white; 
+    font-size: 1.5rem; 
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    text-align: center;
+    font-weight: bold;
+    position: absolute; 
+    bottom: 50px; 
+    right: 89px; 
+    width: 150px; 
+}
+
+.done-btn:hover {
+    background-color: #5fa68d;
+}
+
+
+/* Style cho Menu Overlay */
+.open-menu {
+    background-color: #F1F1F1; 
+    color: #8d8686; 
+    font-size: 1.5rem; 
+    padding: 10px 20px;
+    border: 1px solid #9e9e9e;
+    border-radius: 999px;
+    cursor: pointer;
+    text-align: center;
+    font-weight: bold;
+    position: fixed; 
+    bottom: 50%; 
+    left: 20px; 
+    width: 50px; 
+    height: 50px;
+    z-index: 1006;
+}
+ 
+
+.open-menu:hover {
+    background-color: #9e9e9e;
+}
+
+.overlay {
+    position: fixed;
+    top: 60px; 
+    left: 0;
+    width: 100%;
+    height: calc(100vh - 60px); 
+    background-color: rgba(0, 0, 0, 0.5);
+    z-index: 1000; 
+    display: none;
+}
+
+
+.menu-ovl {
+    width: 40%;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    background-color: #f9f9f9;
+    padding: 30px 50px;
+    box-shadow: 2px 0 10px rgba(0, 0, 0, 0.1);
+    position: fixed;
+    top: 60px;
+    left: -30%;
+    height: calc(100vh - 60px);
+    z-index: 1005;
+    transition: left 0.3s ease;
+    overflow-y: auto; /* Thêm thanh cuộn dọc khi cần */
+    scrollbar-width: thin; /* Đặt độ rộng thanh cuộn */
+    scrollbar-color: #888 #f1f1f1; /* Màu thanh cuộn */
+}
+
+.menu-ovl::-webkit-scrollbar {
+    width: 8px; /* Độ rộng của thanh cuộn */
+}
+
+.menu-ovl::-webkit-scrollbar-thumb {
+    background-color: #888; /* Màu của phần thanh cuộn */
+}
+
+.menu-ovl::-webkit-scrollbar-track {
+    background-color: #f1f1f1; /* Màu của phần nền thanh cuộn */
+}
+.menu-ovl button {
+    margin-left: 80px;
+    margin-bottom: 28px; 
+    padding: 10px 20px;
+    font-size: 1.4rem;
+    background-color: #EAEAEA;
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    min-width: 291px;
+    height: 84px;
+    text-align: center;
+    transition: transform 0.3s ease, box-shadow 0.3s ease; 
+}
+
+.menu-ovl button:first-child {
+    margin-top: 20px; 
+}
+
+.menu-ovl button:last-child {
+    margin-bottom: 0; 
+}
+
+.menu-ovl button a {
+    padding: 20px 30px;
+    color: #696969;
+    text-decoration: none;
+    font-size: 2.3rem;
+    font-weight: 500;
+    display: block;
+}
+
+.menu-ovl button:hover {
+    transform: translateY(-5px); 
+    box-shadow: 0 8px 15px rgba(0, 0, 0, 0.3); 
+    background-color: #F5DD85; 
+}
+
+
+/* Gợi ý trong bảng nhập sách */
+.nameBook {
+    position: relative;
+}
+
+.autocomplete-suggestions {
+    position: absolute;
+    border: 1px solid #ccc;
+    background-color: #fff;
+    max-height: 150px;
+    overflow-y: auto;
+    z-index: 10;
+    width: 100%; 
+    top: calc(100% + 4px); 
+    left: 0; 
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); 
+    border-radius: 4px; 
+}
+  
+
+.autocomplete-suggestions div {
+    padding: 8px 12px; 
+    cursor: pointer;
+    font-size: 14px; 
+}
+  
+.autocomplete-suggestions div:hover {
+    background-color: #e6f7ff; 
+    color: #007bff;
+}
+
+.nameCustomer {
+    position: absolute;
+    border: 1px solid #ccc;
+    background-color: #fff;
+    max-height: 150px;
+    overflow-y: auto;
+    z-index: 10;
+    width: 100%; 
+    top: calc(100% + 4px); 
+    left: 0; 
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); 
+    border-radius: 4px; 
+}
+
+.nameCustomer div {
+    padding: 8px 12px; 
+    cursor: pointer;
+    font-size: 14px; 
+}
+
+.nameCustomer div:hover {
+    background-color: #e6f7ff; 
+    color: #007bff; 
+}
+
+
+/* Style cho toast */
+.toast, .toastError {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    color: white;
+    padding: 10px 20px;
+    border-radius: 5px;
+    font-size: 16px;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.5s ease, visibility 0.5s ease;
+    z-index: 10001;
+}
+
+.toast.show, .toastError.show {
+    opacity: 1;
+    visibility: visible;
+}
+
+.toast {
+    background-color: #28a745; 
+}
+
+.toastError {
+    background-color: #e33a3a; 
+}
