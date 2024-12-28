@@ -399,6 +399,7 @@ async function submitBooks() {
       author: cells[3].value.trim(),
       quantity: parseInt(cells[4].value.trim()) || 0,
       price: parseFloat(cells[5].value.trim()) || 0,
+      
     };
 
     // Kiểm tra nếu bất kỳ trường nào bị bỏ trống

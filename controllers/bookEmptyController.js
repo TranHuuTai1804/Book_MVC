@@ -57,6 +57,7 @@ const addBook = async (req, res) => {
       author: req.body.author[index],
       quantity: parseInt(req.body.quantity[index], 10),
       price: parseFloat(req.body.price[index]),
+      img: req.body.img[index], // Thêm URL hình ảnh
     }));
 
     for (const book of books) {

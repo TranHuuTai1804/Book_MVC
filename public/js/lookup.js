@@ -160,10 +160,12 @@ async function showDefaultList() {
     books.forEach((book) => {
       const bookItem = document.createElement("div");
       bookItem.className = "book-item";
+
+      // Sử dụng hàm getBookImage để lấy URL hình ảnh
+      const bookImage = getBookImage(book.Ten_sach);
+
       bookItem.innerHTML = `
-        <img src="${book.img || "/img/book1.png"}" alt="${
-        book.Ten_sach
-      }" class="book-image">
+        <img src="${bookImage}" alt="${book.Ten_sach}" class="book-image">
         <h3 class="book-title">${book.Ten_sach}</h3>
         <p class="book-price">$${book.Gia}</p>
         <div class="progress-container">
@@ -192,13 +194,14 @@ async function selectBook(book) {
   // Lấy giá trị So_luong_ton_it_nhat từ quy định
   const soLuongTonItHon = await fetchSoLuongTonItHon();
 
+  // Sử dụng hàm getBookImage để lấy URL hình ảnh
+  const bookImage = getBookImage(book.Ten_sach);
+
   const bookDetail = document.createElement("div");
   bookDetail.className = "book-detail";
   bookDetail.innerHTML = `
     <div class="book-image-container">
-      <img src="${book.img || "/img/book1.png"}" alt="${
-    book.Ten_sach
-  }" class="book-image">
+      <img src="${bookImage}" alt="${book.Ten_sach}" class="book-image">
     </div>
     <div class="book-info">
       <h2 class="book-title">${book.Ten_sach}</h2>
@@ -428,3 +431,25 @@ menuOv.addEventListener("scroll", function () {
     menuOv.style.scrollbarWidth = "thin"; // Hiển thị lại thanh cuộn khi ngừng lướt
   }, 100); // Ẩn thanh cuộn khi lướt và hiển thị lại sau khi ngừng
 });
+
+let imageMapping = {};
+
+// Tải dữ liệu từ tệp JSON
+async function loadImageMapping() {
+  try {
+    const response = await fetch('/data/bookImages.json');
+    if (!response.ok) {
+      throw new Error('Failed to load image mapping');
+    }
+    imageMapping = await response.json();
+  } catch (error) {
+    console.error('Error loading image mapping:', error);
+  }
+}
+
+function getBookImage(bookTitle) {
+  return imageMapping[bookTitle] || "/img/default.jpg";
+}
+
+// Gọi hàm loadImageMapping khi trang được tải
+document.addEventListener("DOMContentLoaded", loadImageMapping);
