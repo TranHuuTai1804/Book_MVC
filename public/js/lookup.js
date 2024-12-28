@@ -160,10 +160,12 @@ async function showDefaultList() {
     books.forEach((book) => {
       const bookItem = document.createElement("div");
       bookItem.className = "book-item";
+
+      // Sử dụng hàm getBookImage để lấy URL hình ảnh
+      const bookImage = getBookImage(book.Ten_sach);
+
       bookItem.innerHTML = `
-        <img src="${book.img || "/img/book1.png"}" alt="${
-        book.Ten_sach
-      }" class="book-image">
+        <img src="${bookImage}" alt="${book.Ten_sach}" class="book-image">
         <h3 class="book-title">${book.Ten_sach}</h3>
         <p class="book-price">$${book.Gia}</p>
         <div class="progress-container">
@@ -192,13 +194,13 @@ async function selectBook(book) {
   // Lấy giá trị So_luong_ton_it_nhat từ quy định
   const soLuongTonItHon = await fetchSoLuongTonItHon();
 
+  // Sử dụng hàm getBookImage để lấy URL hình ảnh
+  const bookImage = getBookImage(book.Ten_sach);
+
   const bookDetail = document.createElement("div");
   bookDetail.className = "book-detail";
   bookDetail.innerHTML = `
-    <div class="book-image-container">
-      <img src="${book.img || "/img/book1.png"}" alt="${
-    book.Ten_sach
-  }" class="book-image">
+    <img src="${bookImage}" alt="${book.Ten_sach}" class="book-image">
     </div>
     <div class="book-info">
       <h2 class="book-title">${book.Ten_sach}</h2>
@@ -219,6 +221,34 @@ async function selectBook(book) {
 document.addEventListener("DOMContentLoaded", () => {
   showDefaultList(); // Hiển thị tất cả các sách ngay khi trang tải
 });
+
+// Hàm để tải danh sách thể loại từ server và hiển thị trong dropdown
+function loadCategory() {
+  fetch("/api/books")
+    .then((response) => {
+      if (!response.ok) {
+        throw new Error("Failed to fetch categories");
+      }
+      return response.json();
+    })
+    .then((books) => {
+      // Lấy danh sách thể loại duy nhất
+      const categories = [...new Set(books.map((book) => book.The_loai))];
+
+      const categoryDropdown = document.getElementById("categoryDropdown");
+      categoryDropdown.innerHTML = ""; // Xóa danh sách cũ
+
+      categories.forEach((category) => {
+        const categoryButton = document.createElement("button");
+        categoryButton.classList.add("filter-btn");
+        categoryButton.textContent = category;
+        categoryButton.onclick = () =>
+          filterByCategory(category, categoryButton);
+        categoryDropdown.appendChild(categoryButton);
+      });
+    })
+    .catch((error) => console.error("Lỗi khi lấy danh sách thể loại:", error));
+}
 
 // Hàm hiển thị danh sách sách theo thể loại
 async function filterByCategory(category, button) {
@@ -252,34 +282,38 @@ async function filterByCategory(category, button) {
     const table = document.createElement("table");
     table.className = "book-table";
     table.innerHTML = `
-                <thead>
-                    <tr>
-                        <th>No.</th>
-                        <th>Name</th>
-                        <th>Category</th>
-                        <th>Author</th>
-                        <th>Quantity</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    ${filteredBooks
-                      .map(
-                        (book, index) => `
-                        <tr>
-                            <td>${index + 1}</td>
-                            <td>${book.Ten_sach}</td>
-                            <td>${book.The_loai}</td>
-                            <td>${book.Ten_tac_gia}</td>
-                            <td>${book.So_luong}</td>
-                        </tr>
-                    `
-                      )
-                      .join("")}
-                </tbody>
-            `;
+      <thead>
+          <tr>
+              <th>No.</th>
+              <th>Name</th>
+              <th>Category</th>
+              <th>Author</th>
+              <th>Quantity</th>
+          </tr>
+      </thead>
+      <tbody>
+          ${filteredBooks
+            .map(
+              (book, index) => `
+              <tr>
+                  <td>${index + 1}</td>
+                  <td>${book.Ten_sach}</td>
+                  <td>${book.The_loai}</td>
+                  <td>${book.Ten_tac_gia}</td>
+                  <td>${book.So_luong}</td>
+              </tr>
+          `
+            )
+            .join("")}
+      </tbody>
+    `;
     bookContainer.appendChild(table);
 
     // Cập nhật nút active
+    document.querySelectorAll(".filter-btn").forEach((btn) => {
+      btn.classList.remove("active");
+    });
+    button.classList.add("active");
   } catch (error) {
     console.error("Error fetching books by category:", error);
   }
@@ -372,17 +406,15 @@ function toggleDropdown() {
 
 // Hàm gọi khi trang web được tải
 window.onload = () => {
-  loadAuthors(); // Tải danh sách tác giả khi trang web tải
+  loadCategory(); // Tải danh sách thể loại khi trang web tải
 };
 
 // Hàm ẩn các dropdown khi người dùng click ra ngoài
 document.addEventListener("click", function (e) {
   const categoryDropdown = document.getElementById("categoryDropdown");
-  const authorDropdown = document.getElementById("authorDropdown");
 
   if (!e.target.closest(".dropdown")) {
     categoryDropdown.classList.remove("show");
-    authorDropdown.classList.remove("show");
   }
 });
 
@@ -428,3 +460,22 @@ menuOv.addEventListener("scroll", function () {
     menuOv.style.scrollbarWidth = "thin"; // Hiển thị lại thanh cuộn khi ngừng lướt
   }, 100); // Ẩn thanh cuộn khi lướt và hiển thị lại sau khi ngừng
 });
+
+let imageMapping = {};
+// Tải dữ liệu từ tệp JSON
+async function loadImageMapping() {
+  try {
+    const response = await fetch("/data/bookImages.json");
+    if (!response.ok) {
+      throw new Error("Failed to load image mapping");
+    }
+    imageMapping = await response.json();
+  } catch (error) {
+    console.error("Error loading image mapping:", error);
+  }
+}
+function getBookImage(bookTitle) {
+  return imageMapping[bookTitle] || "/img/default.jpg";
+}
+// Gọi hàm loadImageMapping khi trang được tải
+document.addEventListener("DOMContentLoaded", loadImageMapping);

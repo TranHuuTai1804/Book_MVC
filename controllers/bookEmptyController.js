@@ -57,6 +57,7 @@ const addBook = async (req, res) => {
       author: req.body.author[index],
       quantity: parseInt(req.body.quantity[index], 10),
       price: parseFloat(req.body.price[index]),
+      // img: req.body.img[index],
     }));
 
     for (const book of books) {
@@ -77,7 +78,7 @@ const addBook = async (req, res) => {
         }
 
         // Cập nhật số lượng sách
-        await Book.updateBookQuantity(rows[0].ID_sach, newQuantity);
+        await bookEmpty.updateBookQuantity(rows[0].ID_sach, newQuantity);
         id_sach = rows[0].ID_sach;
       } else {
         if (minStockLimit !== null && book.quantity > minStockLimit) {
@@ -89,7 +90,7 @@ const addBook = async (req, res) => {
         }
 
         // Thêm sách mới
-        id_sach = await Book.addNewBook(book);
+        id_sach = await bookEmpty.addNewBook(book);
       }
 
       // Lấy ID phiếu nhập lớn nhất và tạo mới
@@ -102,7 +103,7 @@ const addBook = async (req, res) => {
         book.quantity,
         id_sach
       );
-      await Book.addImportInvoiceDetail(invoiceId, id_sach, book.quantity);
+      await bookEmpty.addImportInvoiceDetail(invoiceId, id_sach, book.quantity);
     }
 
     res.redirect(
