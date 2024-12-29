@@ -9,26 +9,37 @@ const login = (req, res) => {
   userModel.getUserByEmail(email, (err, results) => {
     if (err) {
       console.error("Lỗi truy vấn:", err);
-      return res.status(500).send("Lỗi hệ thống.");
+      return res.redirect(
+        "/?message=" + encodeURIComponent("Lỗi hệ thống. Vui lòng thử lại sau.")
+      );
     }
 
     if (results.length === 0) {
-      return res.status(404).send("Email không tồn tại.");
+      return res.redirect(
+        "/?message=" + encodeURIComponent("Email không tồn tại.")
+      );
     }
 
     const user = results[0];
 
     if (user.status !== "active") {
-      return res
-        .status(403)
-        .send("Tài khoản của bạn đang bị khóa hoặc không hoạt động.");
+      return res.redirect(
+        "/?message=" +
+          encodeURIComponent(
+            "Tài khoản của bạn đang bị khóa hoặc không hoạt động."
+          )
+      );
     }
 
     if (bcrypt.compareSync(password, user.password)) {
       req.session.user = { id: user.id, email: user.email };
-      return res.redirect("/home");
+      return res.redirect(
+        "/home?message=" + encodeURIComponent("Đăng nhập thành công!")
+      );
     } else {
-      return res.status(401).send("Mật khẩu không chính xác.");
+      return res.redirect(
+        "/?message=" + encodeURIComponent("Mật khẩu không chính xác.")
+      );
     }
   });
 };
@@ -38,17 +49,25 @@ const signup = (req, res) => {
   const { email, password, confirmPassword } = req.body;
 
   if (password !== confirmPassword) {
-    return res.status(400).send("Mật khẩu và xác nhận mật khẩu không khớp.");
+    return res.redirect(
+      "/signup?message=" +
+        encodeURIComponent("Mật khẩu và xác nhận mật khẩu không khớp.")
+    );
   }
 
   userModel.getUserByEmail(email, (err, results) => {
     if (err) {
       console.error("Lỗi truy vấn:", err);
-      return res.status(500).send("Lỗi hệ thống.");
+      return res.redirect(
+        "/signup?message=" +
+          encodeURIComponent("Lỗi hệ thống. Vui lòng thử lại sau.")
+      );
     }
 
     if (results.length > 0) {
-      return res.status(409).send("Email đã tồn tại.");
+      return res.redirect(
+        "/signup?message=" + encodeURIComponent("Email đã tồn tại.")
+      );
     }
 
     const hashedPassword = bcrypt.hashSync(password, 10);
@@ -56,10 +75,15 @@ const signup = (req, res) => {
     userModel.createUser(email, hashedPassword, (err) => {
       if (err) {
         console.error("Lỗi khi thêm người dùng:", err);
-        return res.status(500).send("Lỗi hệ thống.");
+        return res.redirect(
+          "/signup?message=" +
+            encodeURIComponent("Lỗi hệ thống. Vui lòng thử lại sau.")
+        );
       }
 
-      res.redirect("/home");
+      res.redirect(
+        "/home?message=" + encodeURIComponent("Đăng ký thành công!")
+      );
     });
   });
 };
@@ -68,9 +92,12 @@ const signup = (req, res) => {
 const logout = (req, res) => {
   req.session.destroy((err) => {
     if (err) {
-      return res.status(500).send("Lỗi hệ thống khi đăng xuất.");
+      return res.redirect(
+        "/home?message=" +
+          encodeURIComponent("Lỗi hệ thống khi đăng xuất. Vui lòng thử lại.")
+      );
     }
-    res.redirect("/"); // Trở về trang đăng nhập sau khi đăng xuất
+    res.redirect("/?message=" + encodeURIComponent("Đăng xuất thành công!"));
   });
 };
 
