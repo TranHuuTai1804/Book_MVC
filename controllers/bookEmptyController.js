@@ -50,14 +50,12 @@ const addBook = async (req, res) => {
       suDungQD4Number !== 0 ? regulation.So_luong_nhap_it_nhat : null;
 
     // Tạo danh sách sách từ req.body
-    const books = req.body.id.map((id, index) => ({
-      id,
-      name: req.body.name[index],
+    const books = req.body.name.map((name, index) => ({
+      name,
       category: req.body.category[index],
       author: req.body.author[index],
       quantity: parseInt(req.body.quantity[index], 10),
       price: parseFloat(req.body.price[index]),
-      // img: req.body.img[index],
     }));
 
     for (const book of books) {
@@ -89,13 +87,17 @@ const addBook = async (req, res) => {
           );
         }
 
+        // Lấy ID_sach lớn nhất và tạo ID mới
+        const maxBookIdResult = await bookEmpty.getMaxBookId();
+        id_sach = maxBookIdResult ? maxBookIdResult + 1 : 1;
+
         // Thêm sách mới
-        id_sach = await bookEmpty.addNewBook(book);
+        await bookEmpty.addNewBook({ ...book, id: id_sach });
       }
 
       // Lấy ID phiếu nhập lớn nhất và tạo mới
       const maxPhieuId = await bookEmpty.getMaxImportInvoiceId();
-      const newPhieuId = maxPhieuId + 1;
+      const newPhieuId = maxPhieuId ? maxPhieuId + 1 : 1;
 
       // Thêm phiếu nhập và chi tiết phiếu nhập
       const invoiceId = await bookEmpty.addImportInvoice(

@@ -140,6 +140,7 @@ async function selectInput(list) {
     console.error("Error fetching book details:", error);
   }
 }
+
 // Hàm hiển thị danh sách mặc định (tất cả các loại sách)
 async function showDefaultList() {
   try {
@@ -161,17 +162,17 @@ async function showDefaultList() {
       const bookItem = document.createElement("div");
       bookItem.className = "book-item";
 
-      // Sử dụng hàm getBookImage để lấy URL hình ảnh
-      const bookImage = getBookImage(book.Ten_sach);
+      // Sử dụng link từ cơ sở dữ liệu để hiển thị hình ảnh
+      const bookImage = book.Link; // Lấy link từ dữ liệu sách
 
       bookItem.innerHTML = `
-        <img src="${bookImage}" alt="${book.Ten_sach}" class="book-image">
+        <img src="/img/${bookImage}" alt="${book.Ten_sach}" class="book-image">
         <h3 class="book-title">${book.Ten_sach}</h3>
         <p class="book-price">$${book.Gia}</p>
         <div class="progress-container">
           <span class="progress-text">${book.So_luong}/${soLuongTonItHon}</span>
           <div class="progress-bar" style="width: ${
-            (book.So_luong / soLuongTonItHon) * 100
+            (book.So_luong / 100) * 100
           }%;"></div>
         </div>
       `;
@@ -194,13 +195,13 @@ async function selectBook(book) {
   // Lấy giá trị So_luong_ton_it_nhat từ quy định
   const soLuongTonItHon = await fetchSoLuongTonItHon();
 
-  // Sử dụng hàm getBookImage để lấy URL hình ảnh
-  const bookImage = getBookImage(book.Ten_sach);
+  // Sử dụng link từ cơ sở dữ liệu để hiển thị hình ảnh
+  const bookImage = book.Link; // Lấy link từ dữ liệu sách
 
   const bookDetail = document.createElement("div");
   bookDetail.className = "book-detail";
   bookDetail.innerHTML = `
-    <img src="${bookImage}" alt="${book.Ten_sach}" class="book-image">
+    <img src="/img/${bookImage}" alt="${book.Ten_sach}" class="book-image">
     </div>
     <div class="book-info">
       <h2 class="book-title">${book.Ten_sach}</h2>
@@ -460,22 +461,3 @@ menuOv.addEventListener("scroll", function () {
     menuOv.style.scrollbarWidth = "thin"; // Hiển thị lại thanh cuộn khi ngừng lướt
   }, 100); // Ẩn thanh cuộn khi lướt và hiển thị lại sau khi ngừng
 });
-
-let imageMapping = {};
-// Tải dữ liệu từ tệp JSON
-async function loadImageMapping() {
-  try {
-    const response = await fetch("/data/bookImages.json");
-    if (!response.ok) {
-      throw new Error("Failed to load image mapping");
-    }
-    imageMapping = await response.json();
-  } catch (error) {
-    console.error("Error loading image mapping:", error);
-  }
-}
-function getBookImage(bookTitle) {
-  return imageMapping[bookTitle] || "/img/default.jpg";
-}
-// Gọi hàm loadImageMapping khi trang được tải
-document.addEventListener("DOMContentLoaded", loadImageMapping);

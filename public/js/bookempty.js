@@ -1,51 +1,51 @@
-// Lưu dữ liệu bảng vào localStorage
-function saveTableToLocalStorage() {
-  const tableBody = document.getElementById("table-body");
-  const rowsData = Array.from(tableBody.children).map((row) => {
-    const inputs = Array.from(row.querySelectorAll("input"));
-    return inputs.map((input) => input.value); // Lưu giá trị của từng ô nhập liệu
-  });
-  localStorage.setItem("tableData", JSON.stringify(rowsData));
-}
+// // Lưu dữ liệu bảng vào localStorage
+// function saveTableToLocalStorage() {
+//   const tableBody = document.getElementById("table-body");
+//   const rowsData = Array.from(tableBody.children).map((row) => {
+//     const inputs = Array.from(row.querySelectorAll("input"));
+//     return inputs.map((input) => input.value); // Lưu giá trị của từng ô nhập liệu
+//   });
+//   localStorage.setItem("tableData", JSON.stringify(rowsData));
+// }
 
-// Khôi phục dữ liệu từ localStorage
-function loadTableFromLocalStorage() {
-  const tableBody = document.getElementById("table-body");
-  const storedData = localStorage.getItem("tableData");
+// // Khôi phục dữ liệu từ localStorage
+// function loadTableFromLocalStorage() {
+//   const tableBody = document.getElementById("table-body");
+//   const storedData = localStorage.getItem("tableData");
 
-  if (storedData) {
-    const rowsData = JSON.parse(storedData);
+//   if (storedData) {
+//     const rowsData = JSON.parse(storedData);
 
-    tableBody.innerHTML = ""; // Xoá nội dung hiện tại của bảng
-    rowsData.forEach((rowData) => {
-      const newRow = document.createElement("tr");
-      newRow.innerHTML = `
-          <td><input type="text" name="id[]" value="${
-            rowData[0] || ""
-          }" placeholder="ID" class="book-no" required></td>
-          <td class="nameBook">
-            <input type="text" name="name[]" value="${
-              rowData[1] || ""
-            }" placeholder="Book name" class="book-name" oninput="showSuggestions(this)" required>
-            <div class="autocomplete-suggestions" style="display: none;"></div>
-          </td>
-          <td><input type="text" name="category[]" value="${
-            rowData[2] || ""
-          }" placeholder="Category" class="book-category" required></td>
-          <td><input type="text" name="author[]" value="${
-            rowData[3] || ""
-          }" placeholder="Author" class="book-author" required></td>
-          <td><input type="number" name="quantity[]" value="${
-            rowData[4] || ""
-          }" placeholder="Quantity" class="book-quantity" min="1" required data-regulation></td>
-          <td><input type="number" name="price[]" value="${
-            rowData[5] || ""
-          }" placeholder="Price" class="book-price" step="0.01" min="0" required></td>
-        `;
-      tableBody.appendChild(newRow);
-    });
-  }
-}
+//     tableBody.innerHTML = ""; // Xoá nội dung hiện tại của bảng
+//     rowsData.forEach((rowData) => {
+//       const newRow = document.createElement("tr");
+//       newRow.innerHTML = `
+//           <td><input type="text" name="id[]" value="${
+//             rowData[0] || ""
+//           }" placeholder="ID" class="book-no" required></td>
+//           <td class="nameBook">
+//             <input type="text" name="name[]" value="${
+//               rowData[1] || ""
+//             }" placeholder="Book name" class="book-name" oninput="showSuggestions(this)" required>
+//             <div class="autocomplete-suggestions" style="display: none;"></div>
+//           </td>
+//           <td><input type="text" name="category[]" value="${
+//             rowData[2] || ""
+//           }" placeholder="Category" class="book-category" required></td>
+//           <td><input type="text" name="author[]" value="${
+//             rowData[3] || ""
+//           }" placeholder="Author" class="book-author" required></td>
+//           <td><input type="number" name="quantity[]" value="${
+//             rowData[4] || ""
+//           }" placeholder="Quantity" class="book-quantity" min="1" required data-regulation></td>
+//           <td><input type="number" name="price[]" value="${
+//             rowData[5] || ""
+//           }" placeholder="Price" class="book-price" step="0.01" min="0" required></td>
+//         `;
+//       tableBody.appendChild(newRow);
+//     });
+//   }
+// }
 
 // Hàm lấy giá trị So_luong_ton_it_nhat từ server
 async function fetchSoLuongTonItHon() {
@@ -188,34 +188,6 @@ document.addEventListener("DOMContentLoaded", async () => {
   await fetchBookTitles();
 });
 
-// Hàm để hiển thị các gợi ý
-function showSuggestions(inputElement) {
-  const suggestionsBox = inputElement.nextElementSibling; // Lấy thẻ div chứa gợi ý
-  const searchTerm = inputElement.value.trim().toLowerCase();
-
-  if (!searchTerm) {
-    suggestionsBox.style.display = "none";
-    return;
-  }
-
-  const filteredBooks = booksList.filter((book) =>
-    book.Ten_sach.toLowerCase().includes(searchTerm)
-  );
-
-  if (filteredBooks.length === 0) {
-    suggestionsBox.style.display = "none";
-    return;
-  }
-
-  suggestionsBox.innerHTML = filteredBooks
-    .map(
-      (book) =>
-        `<div onclick="selectSuggestion('${book.Ten_sach}', '${inputElement.dataset.rowIndex}')">${book.Ten_sach}</div>`
-    )
-    .join("");
-  suggestionsBox.style.display = "block";
-}
-
 // Hàm khi người dùng chọn một gợi ý
 // Hàm để hiển thị các gợi ý
 function showSuggestions(inputElement) {
@@ -269,7 +241,6 @@ function selectSuggestion(bookName, suggestionElement) {
 
     // Tự động điền thông tin vào các ô input liên quan
     const row = inputElement.closest("tr");
-    const idInput = row.querySelector('input[name="id[]"]');
     const categoryInput = row.querySelector('input[name="category[]"]');
     const authorInput = row.querySelector('input[name="author[]"]');
     const priceInput = row.querySelector('input[name="price[]"]');
@@ -304,7 +275,6 @@ function addRow() {
 
   const newRow = document.createElement("tr");
   newRow.innerHTML = `
-      <td><input type="text" name="id[]" placeholder="ID" class="book-no" data-row-index="${rowIndex}" required></td>
       <td class="nameBook">
           <input type="text" name="name[]" placeholder="Book name" class="book-name" data-row-index="${rowIndex}" oninput="showSuggestions(this)" required>
           <div class="autocomplete-suggestions" style="display: none;"></div>
@@ -393,17 +363,15 @@ async function submitBooks() {
   rows.forEach((row) => {
     const cells = row.querySelectorAll("input");
     const bookData = {
-      no: cells[0].value.trim(),
-      name: cells[1].value.trim(),
-      category: cells[2].value.trim(),
-      author: cells[3].value.trim(),
-      quantity: parseInt(cells[4].value.trim()) || 0,
-      price: parseFloat(cells[5].value.trim()) || 0,
+      name: cells[0].value.trim(),
+      category: cells[1].value.trim(),
+      author: cells[2].value.trim(),
+      quantity: parseInt(cells[3].value.trim()) || 0,
+      price: parseFloat(cells[4].value.trim()) || 0,
     };
 
     // Kiểm tra nếu bất kỳ trường nào bị bỏ trống
     if (
-      !bookData.no ||
       !bookData.name ||
       !bookData.category ||
       !bookData.author ||
@@ -420,7 +388,6 @@ async function submitBooks() {
     // Làm mới bảng sau khi nhấn Done
     document.getElementById("table-body").innerHTML = `
         <tr>
-          <td><input type="text" name="id[]" placeholder="ID" class="book-no" required></td>
           <td class="nameBook">
             <input type="text" name="name[]" placeholder="Book name" class="book-name" oninput="showSuggestions(this)" required>
             <div class="autocomplete-suggestions" style="display: none;"></div>
