@@ -88,26 +88,21 @@ const formatBookTitleToImageUrl = (bookTitle) => {
 // Thêm sách mới vào cơ sở dữ liệu
 const addNewBook = async (book) => {
   try {
-    // Lấy ID_sach lớn nhất
-    const maxIdResult = await runQuery(
-      `SELECT MAX(ID_sach) AS max_id FROM Sach`
-    );
-    const newId = maxIdResult[0]?.max_id ? maxIdResult[0].max_id + 1 : 1;
-
-    // Tạo link từ tên sách
-    const link = formatBookTitleToImageUrl(book.name);
-
+     // Lấy ID lớn nhất từ cơ sở dữ liệu
+     const maxBookIdResult = await getMaxBookId();
+    
+     // Tạo ID mới: max ID + 1
+     const newId = maxBookIdResult ? maxBookIdResult + 1 : 1;
     // Thêm sách mới vào cơ sở dữ liệu
-    const sql = `INSERT INTO Sach (ID_sach, Ten_sach, The_loai, Ten_tac_gia, So_luong, Gia, Link)
-                 VALUES (?, ?, ?, ?, ?, ?, ?)`;
+    const sql = `INSERT INTO Sach (ID_sach, Ten_sach, Ten_tac_gia, The_loai, So_luong, Gia)
+                 VALUES (?, ?, ?, ?, ?, ?)`;
     await runQuery(sql, [
       newId,
       book.name,
-      book.category,
       book.author,
+      book.category,
       book.quantity,
       book.price,
-      link,
     ]);
 
     console.log(`Thêm sách mới thành công với ID: ${newId}`);

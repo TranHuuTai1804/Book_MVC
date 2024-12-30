@@ -3,7 +3,6 @@ const bodyParser = require("body-parser");
 const path = require("path");
 const dotenv = require("dotenv");
 const session = require("express-session");
-
 dotenv.config();
 
 const app = express();

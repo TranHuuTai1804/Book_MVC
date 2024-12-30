@@ -60,10 +60,11 @@ const addBook = async (req, res) => {
 
     for (const book of books) {
       const rows = await bookEmpty.findBook(book);
+      const existingBook = rows[0];
+      let id_sach;  
 
-      let id_sach;
-
-      if (rows.length > 0) {
+      if (existingBook) {
+        console.log("Sách cũ:",rows[0].Ten_sach )
         const currentQuantity = parseInt(rows[0].So_luong, 10);
         const newQuantity = currentQuantity + book.quantity;
 
@@ -79,6 +80,7 @@ const addBook = async (req, res) => {
         await bookEmpty.updateBookQuantity(rows[0].ID_sach, newQuantity);
         id_sach = rows[0].ID_sach;
       } else {
+        console.log("Sách mới:" )
         if (minStockLimit !== null && book.quantity > minStockLimit) {
           return res.redirect(
             `/bookempty?message=${encodeURIComponent(
@@ -90,9 +92,11 @@ const addBook = async (req, res) => {
         // Lấy ID_sach lớn nhất và tạo ID mới
         const maxBookIdResult = await bookEmpty.getMaxBookId();
         id_sach = maxBookIdResult ? maxBookIdResult + 1 : 1;
+        console.log("Max id sach:", id_sach);
 
         // Thêm sách mới
         await bookEmpty.addNewBook({ ...book, id: id_sach });
+
       }
 
       // Lấy ID phiếu nhập lớn nhất và tạo mới
@@ -105,7 +109,9 @@ const addBook = async (req, res) => {
         book.quantity,
         id_sach
       );
+      console.log("Thêm phiếu nhập:", invoiceId );
       await bookEmpty.addImportInvoiceDetail(invoiceId, id_sach, book.quantity);
+      console.log("Thêm chi tiết phiếu nhập:", invoiceId );
     }
 
     res.redirect(
