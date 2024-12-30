@@ -84,6 +84,7 @@ function display(result) {
   // Thêm danh sách vào resultIp
   resultIp.innerHTML = "<ul>" + content.join("") + "</ul>";
 }
+
 // Hàm khi người dùng chọn kết quả tìm kiếm
 async function selectInput(list) {
   // Cập nhật giá trị ô input với tên sách được chọn
@@ -113,9 +114,11 @@ async function selectInput(list) {
       bookDetail.className = "book-detail";
       bookDetail.innerHTML = `
         <div class="book-image-container">
-          <img src="${selectedBook.img || "/img/book1.png"}" alt="${
-        selectedBook.Ten_sach
-      }" class="book-image">
+        <img 
+          src="${selectedBook.img ? selectedBook.img : `/img/${bookImage}`}" 
+          alt="${selectedBook.Ten_sach}" 
+          class="book-image">
+      </div>
         </div>
         <div class="book-info">
           <h2 class="book-title">${selectedBook.Ten_sach}</h2>
@@ -376,7 +379,7 @@ async function selectAuthor(authorName) {
       const bookItem = document.createElement("div");
       bookItem.className = "book-item";
       bookItem.innerHTML = `
-        <img src="${book.img || "/img/book1.png"}" alt="${
+        <img src="${book.img || "/book/book1.png"}" alt="${
         book.Ten_sach
       }" class="book-image">
         <h3 class="book-title">${book.Ten_sach}</h3>
@@ -399,16 +402,16 @@ async function selectAuthor(authorName) {
   }
 }
 
+// Hàm gọi khi trang web được tải
+window.onload = () => {
+  loadCategory(); // Tải danh sách thể loại khi trang web tải
+};
+
 // Hàm toggle dropdown cho thể loại
 function toggleDropdown() {
   const categoryDropdown = document.getElementById("categoryDropdown");
   categoryDropdown.classList.toggle("show");
 }
-
-// Hàm gọi khi trang web được tải
-window.onload = () => {
-  loadCategory(); // Tải danh sách thể loại khi trang web tải
-};
 
 // Hàm ẩn các dropdown khi người dùng click ra ngoài
 document.addEventListener("click", function (e) {

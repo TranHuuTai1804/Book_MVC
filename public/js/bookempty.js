@@ -245,7 +245,6 @@ function selectSuggestion(bookName, suggestionElement) {
     const authorInput = row.querySelector('input[name="author[]"]');
     const priceInput = row.querySelector('input[name="price[]"]');
 
-    if (idInput) idInput.value = selectedBook.ID_sach || "";
     if (categoryInput) categoryInput.value = selectedBook.The_loai || "";
     if (authorInput) authorInput.value = selectedBook.Ten_tac_gia || "";
     if (priceInput) priceInput.value = selectedBook.Gia || "";

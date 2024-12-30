@@ -158,7 +158,6 @@ input[type="text"], input[type="email"] {
     height: 50px;
     z-index: 1006;
 }
- 
 
 .open-menu:hover {
     background-color: #9e9e9e;
@@ -174,7 +173,6 @@ input[type="text"], input[type="email"] {
     z-index: 1000; 
     display: none;
 }
-
 
 .menu-ovl {
     width: 40%;

@@ -62,7 +62,7 @@ body {
 
 .navbar {
     width: 100%;
-    height: 60px; 
+    height: 70px; 
     padding: 20px 6%;
     display: flex;
     justify-content: space-between;
@@ -104,8 +104,6 @@ body {
 .navbar-right {
     display: flex;
     align-items: center;
-    justify-content: space-between;
-    gap: 40px;
 }
 
 
