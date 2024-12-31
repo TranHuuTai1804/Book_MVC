@@ -1,5 +1,5 @@
 const connection = require("../config/db");
-const diacritics = require("diacritics");
+const diacritics = require('diacritics');
 
 // Tạo hàm query
 function runQuery(sql, params) {
@@ -46,14 +46,15 @@ const updateBookQuantity = async (id_sach, newQuantity) => {
   await runQuery(sql, [newQuantity, id_sach]);
 };
 
+
 function removeVietnameseTones(str) {
-  str = str.replace(/à|á|ạ|ả|ã|â|ầ|ấ|ậ|ẩ|ẫ|ă|ằ|ắ|ặ|ẳ|ẵ/g, "a");
-  str = str.replace(/è|é|ẹ|ẻ|ẽ|ê|ề|ế|ệ|ể|ễ/g, "e");
-  str = str.replace(/ì|í|ị|ỉ|ĩ/g, "i");
-  str = str.replace(/ò|ó|ọ|ỏ|õ|ô|ồ|ố|ộ|ổ|ỗ|ơ|ờ|ớ|ợ|ở|ỡ/g, "o");
-  str = str.replace(/ù|ú|ụ|ủ|ũ|ư|ừ|ứ|ự|ử|ữ/g, "u");
-  str = str.replace(/ỳ|ý|ỵ|ỷ|ỹ/g, "y");
-  str = str.replace(/đ/g, "d");
+  str = str.replace(/à|á|ạ|ả|ã|â|ầ|ấ|ậ|ẩ|ẫ|ă|ằ|ắ|ặ|ẳ|ẵ/g,"a"); 
+  str = str.replace(/è|é|ẹ|ẻ|ẽ|ê|ề|ế|ệ|ể|ễ/g,"e"); 
+  str = str.replace(/ì|í|ị|ỉ|ĩ/g,"i"); 
+  str = str.replace(/ò|ó|ọ|ỏ|õ|ô|ồ|ố|ộ|ổ|ỗ|ơ|ờ|ớ|ợ|ở|ỡ/g,"o"); 
+  str = str.replace(/ù|ú|ụ|ủ|ũ|ư|ừ|ứ|ự|ử|ữ/g,"u"); 
+  str = str.replace(/ỳ|ý|ỵ|ỷ|ỹ/g,"y"); 
+  str = str.replace(/đ/g,"d");
   str = str.replace(/À|Á|Ạ|Ả|Ã|Â|Ầ|Ấ|Ậ|Ẩ|Ẫ|Ă|Ằ|Ắ|Ặ|Ẳ|Ẵ/g, "A");
   str = str.replace(/È|É|Ẹ|Ẻ|Ẽ|Ê|Ề|Ế|Ệ|Ể|Ễ/g, "E");
   str = str.replace(/Ì|Í|Ị|Ỉ|Ĩ/g, "I");
@@ -67,22 +68,20 @@ function removeVietnameseTones(str) {
   str = str.replace(/\u02C6|\u0306|\u031B/g, ""); // ˆ ̆ ̛  Â, Ê, Ă, Ơ, Ư
   // Remove extra spaces
   // Bỏ các khoảng trắng liền nhau
-  str = str.replace(/ + /g, " ");
+  str = str.replace(/ + /g," ");
   str = str.trim();
   // Remove punctuations
   // Bỏ dấu câu, kí tự đặc biệt
-  str = str.replace(
-    /!|@|%|\^|\*|\(|\)|\+|\=|\<|\>|\?|\/|,|\.|\:|\;|\'|\"|\&|\#|\[|\]|~|\$|_|`|-|{|}|\||\\/g,
-    " "
-  );
+  str = str.replace(/!|@|%|\^|\*|\(|\)|\+|\=|\<|\>|\?|\/|,|\.|\:|\;|\'|\"|\&|\#|\[|\]|~|\$|_|`|-|{|}|\||\\/g," ");
   return str;
 }
+
 // Hàm chuyển đổi tên sách thành URL hình ảnh
 const formatBookTitleToImageUrl = (bookTitle) => {
   // Loại bỏ dấu tiếng Việt
   const normalizedTitle = removeVietnameseTones(bookTitle);
   // Thay thế khoảng trắng và ký tự không phải chữ cái hoặc số bằng dấu gạch dưới
-  return `${normalizedTitle.replace(/[^a-zA-Z0-9]+/g, "_")}.jpg`;
+  return `${normalizedTitle.replace(/[^a-zA-Z0-9]+/g, '_')}.jpg`;
 };
 
 // Thêm sách mới vào cơ sở dữ liệu
@@ -109,7 +108,6 @@ const addNewBook = async (book) => {
       link,
     ]);
 
-    console.log(`Thêm sách mới thành công với ID: ${newId}`);
     return newId;
   } catch (error) {
     console.error("Lỗi khi thêm sách mới:", error.message);

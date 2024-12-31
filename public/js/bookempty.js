@@ -362,11 +362,13 @@ async function submitBooks() {
   rows.forEach((row) => {
     const cells = row.querySelectorAll("input");
     const bookData = {
-      name: cells[0].value.trim(),
-      category: cells[1].value.trim(),
-      author: cells[2].value.trim(),
-      quantity: parseInt(cells[3].value.trim()) || 0,
-      price: parseFloat(cells[4].value.trim()) || 0,
+      no: cells[0].value.trim(),
+      name: cells[1].value.trim(),
+      category: cells[2].value.trim(),
+      author: cells[3].value.trim(),
+      quantity: parseInt(cells[4].value.trim()) || 0,
+      price: parseFloat(cells[5].value.trim()) || 0,
+      
     };
 
     // Kiểm tra nếu bất kỳ trường nào bị bỏ trống

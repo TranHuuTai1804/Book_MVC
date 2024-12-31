@@ -154,9 +154,6 @@ async function showDefaultList() {
     }
     const books = await response.json();
 
-    // Lấy giá trị So_luong_ton_it_nhat từ quy định
-    const soLuongTonItHon = await fetchSoLuongTonItHon();
-
     // Hiển thị danh sách mặc định
     const bookContainer = document.querySelector(".book-container");
     bookContainer.innerHTML = ""; // Xóa nội dung cũ nếu có
@@ -173,7 +170,7 @@ async function showDefaultList() {
         <h3 class="book-title">${book.Ten_sach}</h3>
         <p class="book-price">$${book.Gia}</p>
         <div class="progress-container">
-          <span class="progress-text">${book.So_luong}/${soLuongTonItHon}</span>
+          <span class="progress-text">${book.So_luong}</span>
           <div class="progress-bar" style="width: ${
             (book.So_luong / 100) * 100
           }%;"></div>
@@ -204,7 +201,8 @@ async function selectBook(book) {
   const bookDetail = document.createElement("div");
   bookDetail.className = "book-detail";
   bookDetail.innerHTML = `
-    <img src="/img/${bookImage}" alt="${book.Ten_sach}" class="book-image">
+    <div class="book-image-container">
+      <img src="/img/${bookImage}" alt="${book.Ten_sach}" class="book-image">
     </div>
     <div class="book-info">
       <h2 class="book-title">${book.Ten_sach}</h2>
@@ -464,3 +462,4 @@ menuOv.addEventListener("scroll", function () {
     menuOv.style.scrollbarWidth = "thin"; // Hiển thị lại thanh cuộn khi ngừng lướt
   }, 100); // Ẩn thanh cuộn khi lướt và hiển thị lại sau khi ngừng
 });
+
