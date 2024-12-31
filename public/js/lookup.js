@@ -109,13 +109,14 @@ async function selectInput(list) {
       const bookContainer = document.querySelector(".book-container");
       bookContainer.innerHTML = ""; // Xóa nội dung cũ nếu có
 
+      // Sử dụng link từ cơ sở dữ liệu để hiển thị hình ảnh
+      const bookImage = selectedBook.Link; // Lấy link từ dữ liệu sách
+
       const bookDetail = document.createElement("div");
       bookDetail.className = "book-detail";
       bookDetail.innerHTML = `
         <div class="book-image-container">
-          <img src="${selectedBook.img || "/img/book1.png"}" alt="${
-        selectedBook.Ten_sach
-      }" class="book-image">
+          <img src="/img/${bookImage}" alt="${selectedBook.Ten_sach}" class="book-image">
         </div>
         <div class="book-info">
           <h2 class="book-title">${selectedBook.Ten_sach}</h2>
@@ -336,14 +337,15 @@ async function selectAuthor(authorName) {
     // Hiển thị danh sách sách của tác giả
     const bookContainer = document.querySelector(".book-container");
     bookContainer.innerHTML = ""; // Xóa nội dung cũ nếu có
-
+    
     filteredBooks.forEach((book) => {
+      // Sử dụng link từ cơ sở dữ liệu để hiển thị hình ảnh
+      const bookImage = book.Link; // Lấy link từ dữ liệu sách
+
       const bookItem = document.createElement("div");
       bookItem.className = "book-item";
       bookItem.innerHTML = `
-        <img src="${book.img || "/img/book1.png"}" alt="${
-        book.Ten_sach
-      }" class="book-image">
+        <img src="/img/${bookImage}" alt="${book.Ten_sach}" class="book-image">
         <h3 class="book-title">${book.Ten_sach}</h3>
         <p class="book-price">$${book.Gia}</p>
         <div class="progress-container">
@@ -364,15 +366,98 @@ async function selectAuthor(authorName) {
   }
 }
 
-// Hàm toggle dropdown cho thể loại
-function toggleDropdown() {
+
+// Hàm chọn thể loại và hiển thị danh sách sách theo thể loại đã chọn
+async function selectCategory(categoryName) {
+  // Đóng dropdown khi đã chọn thể loại
   const categoryDropdown = document.getElementById("categoryDropdown");
-  categoryDropdown.classList.toggle("show");
+  categoryDropdown.classList.remove("show");
+
+  // Gọi API để lấy tất cả sách
+  try {
+    const response = await fetch("/api/books");
+    if (!response.ok) {
+      throw new Error("Failed to fetch books");
+    }
+    const books = await response.json();
+
+    // Lọc sách theo thể loại đã chọn
+    const filteredBooks = books.filter(
+      (book) => book.The_loai === categoryName
+    );
+
+    // Lấy giá trị So_luong_ton_it_nhat từ quy định
+    const soLuongTonItHon = await fetchSoLuongTonItHon();
+
+    // Hiển thị danh sách sách của thể loại
+    const bookContainer = document.querySelector(".book-container");
+    bookContainer.innerHTML = ""; // Xóa nội dung cũ nếu có
+    
+    filteredBooks.forEach((book) => {
+      // Sử dụng link từ cơ sở dữ liệu để hiển thị hình ảnh
+      const bookImage = book.Link; // Lấy link từ dữ liệu sách
+
+      const bookItem = document.createElement("div");
+      bookItem.className = "book-item";
+      bookItem.innerHTML = `
+        <img src="/img/${bookImage}" alt="${book.Ten_sach}" class="book-image">
+        <h3 class="book-title">${book.Ten_sach}</h3>
+        <p class="book-price">$${book.Gia}</p>
+        <div class="progress-container">
+          <span class="progress-text">${book.So_luong}/${soLuongTonItHon}</span>
+          <div class="progress-bar" style="width: ${
+            (book.So_luong / soLuongTonItHon) * 100
+          }%;"></div>
+        </div>
+      `;
+
+      // Thêm sự kiện click để hiển thị chi tiết sách khi người dùng click vào sách
+      bookItem.addEventListener("click", () => selectBook(book));
+
+      bookContainer.appendChild(bookItem);
+    });
+  } catch (error) {
+    console.error("Error fetching books:", error);
+  }
+}
+
+// Hàm để tải danh sách thể loại từ server và hiển thị trong dropdown
+function loadCategories() {
+  // Giả sử bạn có một API để lấy danh sách sách
+  fetch("/api/books")
+    .then((response) => response.json())
+    .then((books) => {
+      const categoryDropdown = document.getElementById("categoryDropdown");
+      categoryDropdown.innerHTML = ""; // Xóa danh sách cũ
+
+      // Sử dụng Set để loại bỏ các thể loại trùng lặp
+      const uniqueCategories = new Set();
+      books.forEach((book) => {
+        uniqueCategories.add(book.The_loai);
+      });
+
+      // Tạo nút cho mỗi thể loại duy nhất
+      uniqueCategories.forEach((category) => {
+        const categoryButton = document.createElement("button");
+        categoryButton.classList.add("filter-btn");
+        categoryButton.textContent = category;
+        categoryButton.onclick = () => selectCategory(category); // Gọi selectCategory khi nhấp vào thể loại
+        categoryDropdown.appendChild(categoryButton);
+      });
+    })
+    .catch((error) => console.error("Lỗi khi lấy danh sách thể loại:", error));
+}
+
+// Hàm toggle dropdown cho thể loại
+function toggleCategoryDropdown() {
+  const categoryDropdown = document.getElementById("categoryDropdown");
+  categoryDropdown.classList.toggle("show"); // Thêm hoặc xóa lớp 'show' để hiển thị/ẩn dropdown
 }
 
 // Hàm gọi khi trang web được tải
 window.onload = () => {
   loadAuthors(); // Tải danh sách tác giả khi trang web tải
+  loadCategories(); // Tải danh sách thể loại khi trang web tải
 };
 
 // Hàm ẩn các dropdown khi người dùng click ra ngoài
