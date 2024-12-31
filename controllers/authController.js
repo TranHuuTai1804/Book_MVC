@@ -31,7 +31,7 @@ const login = (req, res) => {
       );
     }
 
-    if (bcrypt.compareSync(password, user.password)) {
+    if (password === user.password) {
       req.session.user = { id: user.id, email: user.email };
       return res.redirect(
         "/home?message=" + encodeURIComponent("Đăng nhập thành công!")

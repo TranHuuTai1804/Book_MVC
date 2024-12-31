@@ -47,7 +47,7 @@ app.use(lookUpRoutes);
 const receiptRoutes = require("./routes/receipt");
 app.use(receiptRoutes);
 
-const reportRoutes = require("./routes/report");
+const reportRoutes = require("./routes/report.routes");
 app.use(reportRoutes);
 
 const editRoutes = require("./routes/regulation");
