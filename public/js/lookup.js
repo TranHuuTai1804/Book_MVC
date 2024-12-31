@@ -151,6 +151,9 @@ async function showDefaultList() {
     }
     const books = await response.json();
 
+    // Lấy giá trị So_luong_ton_it_nhat từ quy định
+    const soLuongTonItHon = await fetchSoLuongTonItHon();
+
     // Hiển thị danh sách mặc định
     const bookContainer = document.querySelector(".book-container");
     bookContainer.innerHTML = ""; // Xóa nội dung cũ nếu có
@@ -169,7 +172,7 @@ async function showDefaultList() {
         <div class="progress-container">
           <span class="progress-text">${book.So_luong}</span>
           <div class="progress-bar" style="width: ${
-            (book.So_luong / 100) * 100
+            (book.So_luong / soLuongTonItHon) * 100
           }%;"></div>
         </div>
       `;
