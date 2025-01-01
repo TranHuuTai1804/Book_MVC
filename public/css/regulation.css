@@ -156,7 +156,7 @@ input[type="text"], input[type="number"] {
 
 /* Các phần tử khác của form */
 #addCustomerForm h3 {
-    font-size: 1.5rem;
+    font-size: 2rem;
     margin-bottom: 20px;
     text-align: center;
     color: #333;
@@ -165,7 +165,7 @@ input[type="text"], input[type="number"] {
 #customerForm label {
     display: block;
     margin: 10px 0 5px;
-    font-size: 1rem;
+    font-size: 2rem;
     font-weight: 500;
     color: #333;
 }
@@ -176,7 +176,7 @@ input[type="text"], input[type="number"] {
     margin: 5px 0 15px;
     border: 1px solid #ddd;
     border-radius: 4px;
-    font-size: 1rem;
+    font-size: 2rem;
 }
 
 /* Submit và Cancel */
@@ -186,35 +186,35 @@ input[type="text"], input[type="number"] {
     margin-top: 10px;
     border: none;
     border-radius: 4px;
-    font-size: 1rem;
+    font-size: 2rem;
     cursor: pointer;
     transition: background-color 0.3s ease;
 }
 
 #customerForm button[type="submit"] {
-    background-color: #28a745;
+    background-color: #72C2AE;
     color: white;
 }
 
 #customerForm button[type="submit"]:hover {
-    background-color: #218838;
+    background-color: #72C2AE;
 }
 
 #customerForm button[type="button"] {
-    background-color: #dc3545;
+    background-color: #b46169;
     color: white;
     float: right;
 }
 
 #customerForm button[type="button"]:hover {
-    background-color: #c82333;
+    background-color: #b46169;
 }
 
 /* Style cho Menu Overlay */
 .open-menu {
     background-color: #F1F1F1; 
     color: #8d8686; 
-    font-size: 1.5rem; 
+    font-size: 2rem; 
     padding: 10px 20px;
     border: 1px solid #9e9e9e;
     border-radius: 999px;
@@ -280,7 +280,7 @@ input[type="text"], input[type="number"] {
     margin-left: 80px;
     margin-bottom: 28px; 
     padding: 10px 20px;
-    font-size: 1.4rem;
+    font-size: 2rem;
     background-color: #EAEAEA;
     color: #fff;
     border: none;
