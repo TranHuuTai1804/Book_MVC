@@ -15,7 +15,7 @@ const getBooks = (req, res) => {
       return res.status(500).json({ error: err.message });
     }
     res.json(results);
-  });
+  }); 
 };
 
 const addBook = async (req, res) => {
@@ -56,6 +56,7 @@ const addBook = async (req, res) => {
       author: req.body.author[index],
       quantity: parseInt(req.body.quantity[index], 10),
       price: parseFloat(req.body.price[index]),
+      // img: req.body.img[index],
     }));
 
     for (const book of books) {
@@ -94,8 +95,7 @@ const addBook = async (req, res) => {
         id_sach = maxBookIdResult ? maxBookIdResult + 1 : 1;
       
         // Thêm sách mới
-        await bookEmpty.addNewBook({ ...book, id: id_sach });
-
+        id_sach = await bookEmpty.addNewBook(book);
       }
 
       // Lấy ID phiếu nhập lớn nhất và tạo mới

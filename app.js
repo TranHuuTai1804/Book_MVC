@@ -10,6 +10,7 @@ const app = express();
 // Cấu hình middleware
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(express.static(path.join(__dirname, "public")));
+app.use(express.json()); // This is important for parsing JSON data
 
 //middleware
 app.use(
@@ -44,10 +45,10 @@ app.use(bookInvoiceRoutes);
 const lookUpRoutes = require("./routes/booklookup");
 app.use(lookUpRoutes);
 
-const receiptRoutes = require("./routes/receipt");
+const receiptRoutes = require("./routes/receipt.routes");
 app.use(receiptRoutes);
 
-const reportRoutes = require("./routes/report");
+const reportRoutes = require("./routes/report.routes");
 app.use(reportRoutes);
 
 const editRoutes = require("./routes/regulation");

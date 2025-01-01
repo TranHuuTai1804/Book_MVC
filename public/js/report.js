@@ -1,47 +1,43 @@
+
 function showTable(type) {
-  const enventoryBtn = document.getElementById("enventory-btn");
+  const InventoryBtn = document.getElementById("Inventory-btn");
   const debtBtn = document.getElementById("debt-btn");
-  const enventoryTable = document.getElementById("enventory-table");
+  const InventoryTable = document.getElementById("Inventory-table");
   const debtTable = document.getElementById("debt-table");
 
-  if (type === "enventory") {
+  if (type === "Inventory") {
     // Đổi trạng thái nút
-    enventoryBtn.classList.add("active");
+    InventoryBtn.classList.add("active");
     debtBtn.classList.remove("active");
 
-    // Hiển thị bảng enventory
-    enventoryTable.style.display = "block";
+    // Hiển thị bảng Inventory
+    InventoryTable.style.display = "block";
     debtTable.style.display = "none";
   } else if (type === "debt") {
     // Đổi trạng thái nút
     debtBtn.classList.add("active");
-    enventoryBtn.classList.remove("active");
+    InventoryBtn.classList.remove("active");
 
     // Hiển thị bảng Debt
     debtTable.style.display = "block";
-    enventoryTable.style.display = "none";
+    InventoryTable.style.display = "none";
   }
 }
 
 // Lấy thẻ input ngày
-const dateInput = document.getElementById("date-receipt");
+const dateInput = document.getElementById("date-report");
 
 // Hàm để lấy ngày hiện tại theo định dạng YYYY-MM-DD
 function getCurrentDate() {
   const today = new Date();
   const year = today.getFullYear();
   const month = String(today.getMonth() + 1).padStart(2, "0"); // Tháng bắt đầu từ 0
-  const day = String(today.getDate()).padStart(2, "0");
-  return `${year}-${month}-${day}`;
+  return `${month}/${year}`;
 }
 
 // Gán ngày hiện tại vào thẻ input khi trang được tải lên
 dateInput.value = getCurrentDate();
 
-// Cập nhật ngày khi người dùng nhấp vào thẻ input
-dateInput.addEventListener("focus", function () {
-  dateInput.value = getCurrentDate(); // Gán lại ngày hiện tại nếu có thay đổi
-});
 
 function toggleMenu() {
   const menu = document.getElementById("hero-menu");
@@ -86,182 +82,187 @@ menuOv.addEventListener("scroll", function () {
   }, 100); // Ẩn thanh cuộn khi lướt và hiển thị lại sau khi ngừng
 });
 
-// Hàm xóa dòng cuối cùng trong bảng
-function deleteRow() {
-  // Kiểm tra bảng đang hiển thị
-  const enventoryTable = document.getElementById("enventory-table");
-  const debtTable = document.getElementById("debt-table");
 
-  if (enventoryTable.style.display === "block") {
-    // Xóa dòng cuối cùng của bảng enventory
-    const tableBody = document.getElementById("table-body");
+// Lắng nghe sự kiện click trên thẻ <a> với id "get-date"
+document.getElementById("get-date").addEventListener("click", async (event) => {
+  event.preventDefault(); // Ngăn chặn hành vi mặc định của thẻ <a>
 
-    if (tableBody.children.length > 0) {
-      tableBody.removeChild(tableBody.lastElementChild);
-    } else {
-      alert("Không còn dòng nào để xóa trong bảng enventory!");
+  // Lấy giá trị từ input date-report
+  const dateInput = document.getElementById("date-report").value.trim();
+  const regex = /^(0[1-9]|1[0-2])\/\d{4}$/; // Kiểm tra định dạng MM/YYYY
+  const InventoryBtn = document.getElementById("Inventory-btn");
+
+  if (regex.test(dateInput)) {
+    const [month, year] = dateInput.split('/'); // Tách tháng và năm
+    const startDate = `${year}-${month}-01`; // Chuyển đổi thành định dạng YYYY-MM-01
+
+    // Kiểm tra xem bảng Inventory có đang active không
+    const isInventoryActive = InventoryBtn.classList.contains("active");
+
+    try {
+      let url = "";
+
+      if (isInventoryActive) {
+        // Nếu Inventory đang active, gọi hàm fetch với URL cho Inventory
+        url = `/report/inventory?date=${startDate}`;
+      } else {
+        // Nếu không, gọi hàm fetch với URL cho Debt (hoặc hàm khác tùy ý)
+        url = `/report/debt?date=${startDate}`;
+      }
+
+      // Gửi yêu cầu GET đến API server với tham số date
+      const response = await fetch(url);
+
+      if (!response.ok) {
+        console.error('Lỗi từ server:', response.statusText);
+        throw new Error(`Lỗi server: ${response.status}`);
+      }
+
+      const data = await response.json(); // Parse JSON từ phản hồi server
+      if (isInventoryActive) {
+        populateTable(data, "Inventory"); // Gọi hàm populateTable để hiển thị dữ liệu
+      }
+      else {
+        populateTable(data, "debt");
+      }
+      showToast("success"); // Hiển thị toast thành công
+    } catch (error) {
+      console.error('Lỗi khi lấy dữ liệu:', error.message);
+      showToast("error"); // Hiển thị toast lỗi
     }
-  } else if (debtTable.style.display === "block") {
-    // Xóa dòng cuối cùng của bảng debt
-    const tableBodyDebt = document.getElementById("table-body-debt");
-
-    if (tableBodyDebt.children.length > 0) {
-      tableBodyDebt.removeChild(tableBodyDebt.lastElementChild);
-    } else {
-      alert("Không còn dòng nào để xóa trong bảng debt!");
-    }
+  } else {
+    showToast("error"); // Hiển thị toast lỗi nếu định dạng không hợp lệ
   }
-}
+});
 
-// Hàm thêm dòng mới vào bảng
-function addRow() {
-  // Kiểm tra bảng đang hiển thị
-  const enventoryTable = document.getElementById("enventory-table");
-  const debtTable = document.getElementById("debt-table");
+// Hàm hiển thị dữ liệu lên bảng
+// Hàm hiển thị dữ liệu lên bảng
+function populateTable(data, type) {
+  const tableBody = document.getElementById("table-body");
+  const tableBodyDebt = document.getElementById("table-body-debt");
 
-  if (enventoryTable.style.display === "block") {
-    // Thêm dòng mới vào bảng enventory
-    const tableBody = document.getElementById("table-body");
+  // Xóa nội dung bảng trước khi thêm dữ liệu mới
+  tableBody.innerHTML = "";
+  tableBodyDebt.innerHTML = "";
+
+  // Kiểm tra nếu dữ liệu không phải là mảng
+  if (!Array.isArray(data)) {
+    console.warn("Dữ liệu không phải mảng, chuyển thành mảng:", data);
+    data = data ? [data] : []; // Nếu data không hợp lệ, chuyển thành mảng rỗng
+  }
+
+  // Hiển thị dữ liệu trong bảng
+  data.forEach(row => {
+    // Tạo dòng mới trong bảng
     const newRow = document.createElement("tr");
 
-    newRow.innerHTML = `
-                    <td><input type="text" placeholder="No."></td>
-                    <td><input type="text" placeholder="Book Name"></td>
-                    <td><input type="text" placeholder="First Existence"></td>
-                    <td><input type="text" placeholder="Arise"></td>
-                    <td><input type="text" placeholder="Last Existence"></td>
-                `;
-    tableBody.appendChild(newRow);
-  } else if (debtTable.style.display === "block") {
-    // Thêm dòng mới vào bảng debt
-    const tableBodyDebt = document.getElementById("table-body-debt");
-    const newRow = document.createElement("tr");
+    // Nếu là bảng Inventory
+    if (type === "Inventory") {
+      // Kiểm tra các giá trị trong row trước khi sử dụng
+      const idSach = row.ID_Sach || "N/A";  // Nếu ID_Sach không hợp lệ, gán "N/A"
+      const tenSach = row.Ten_Sach || "Không có tên";  // Nếu Ten_Sach không hợp lệ, gán "Không có tên"
 
-    newRow.innerHTML = `
-                    <td><input type="text" placeholder="No."></td>
-                    <td><input type="text" placeholder="Guest Name"></td>
-                    <td><input type="text" placeholder="First Debt"></td>
-                    <td><input type="text" placeholder="Arise"></td>
-                    <td><input type="text" placeholder="Last Debt"></td>
-                `;
-    tableBodyDebt.appendChild(newRow);
-  }
-}
-// Hàm xử lý khi nhấn nút Done
-function submitBooks() {
-  // Kiểm tra bảng đang hiển thị
-  const enventoryTable = document.getElementById("enventory-table");
-  const debtTable = document.getElementById("debt-table");
+      // Chuyển đổi các giá trị sang số
+      const tonDauKy = parseInt(row.Ton_dau_ky) || 0;  // Chuyển thành số, nếu không hợp lệ gán 0
+      const tongNhap = parseInt(row.Tong_nhap) || 0;  // Chuyển thành số, nếu không hợp lệ gán 0
+      const tongBan = parseInt(row.Tong_ban) || 0;  // Chuyển thành số, nếu không hợp lệ gán 0
+      const tonCuoiKy = parseInt(row.Ton_cuoi_ky) || 0;  // Chuyển thành số, nếu không hợp lệ gán 0
 
-  if (enventoryTable.style.display === "block") {
-    // Xử lý dữ liệu cho bảng enventory
-    const rows = document.querySelectorAll("#table-body tr");
-    const books = [];
-    let hasEmptyField = false;
+      newRow.innerHTML = `
+        <td>${idSach}</td>
+        <td>${tenSach}</td>
+        <td>${tonDauKy}</td>
+        <td>${tongNhap - tongBan}</td>
+        <td>${tonCuoiKy}</td>
+      `;
+      tableBody.appendChild(newRow);
+    }
+    // Nếu là bảng Debt
+    else if (type === "debt") {
+      const idKH = row.ID_Khach_hang || "N/A";  // Nếu ID_Khach_hang không hợp lệ, gán "N/A"
+      const tenKH = row.Ten_khach_hang || "Không có tên";  // Nếu Ten_Khach_hang không hợp lệ, gán "Không có tên"
 
-    rows.forEach((row) => {
-      const cells = row.querySelectorAll("input");
-      const bookData = {
-        no: cells[0].value.trim(),
-        bookName: cells[1].value.trim(),
-        firstExistence: cells[2].value.trim(),
-        arise: cells[3].value.trim(),
-        lastExistence: cells[4].value.trim(),
-      };
+      const noDauKy = parseInt(row.Cong_no_dau_ky) || 0; // Giá trị nợ đầu kỳ
+      const Tongthuthang = parseInt(row.Tong_thu_tien); 
+      const Tonghoadonthang = parseInt(row.Tong_hoa_don);
 
-      if (
-        !bookData.no ||
-        !bookData.bookName ||
-        !bookData.firstExistence ||
-        !bookData.arise ||
-        !bookData.lastExistence
-      ) {
-        hasEmptyField = true;
-      }
-      books.push(bookData);
-    });
-
-    if (hasEmptyField) {
-      showToast("error");
-      return;
+      newRow.innerHTML = `
+        <td>${idKH}</td>
+        <td>${tenKH}</td>
+        <td>${noDauKy}</td>
+        <td>${Tongthuthang - Tonghoadonthang}</td>
+        <td>${noDauKy + Tongthuthang - Tonghoadonthang}</td>
+      `;
+      tableBodyDebt.appendChild(newRow);
     }
 
-    console.log("Enventory Report:", books);
-
-    showToast("success");
-  } else if (debtTable.style.display === "block") {
-    // Xử lý dữ liệu cho bảng debt
-    const rows = document.querySelectorAll("#table-body-debt tr");
-    const debts = [];
-    let hasEmptyField = false;
-
-    rows.forEach((row) => {
-      const cells = row.querySelectorAll("input");
-      const debtData = {
-        no: cells[0].value.trim(),
-        guestName: cells[1].value.trim(),
-        firstDebt: cells[2].value.trim(),
-        arise: cells[3].value.trim(),
-        lastDebt: cells[4].value.trim(),
-      };
-
-      if (
-        !debtData.no ||
-        !debtData.guestName ||
-        !debtData.firstDebt ||
-        !debtData.arise ||
-        !debtData.lastDebt
-      ) {
-        hasEmptyField = true;
-      }
-      debts.push(debtData);
-    });
-
-    if (hasEmptyField) {
-      showToast("error");
-      return;
-    }
-
-    console.log("Debt Report:", debts);
-
-    showToast("success");
-  }
-
-  // Làm mới bảng sau khi nhấn Done (áp dụng cho cả hai bảng)
-  if (enventoryTable.style.display === "block") {
-    document.getElementById("table-body").innerHTML = `
-                    <tr>
-                        <td><input type="text" placeholder="No."></td>
-                        <td><input type="text" placeholder="Book Name"></td>
-                        <td><input type="text" placeholder="First Existence"></td>
-                        <td><input type="text" placeholder="Arise"></td>
-                        <td><input type="text" placeholder="Last Existence"></td>
-                    </tr>
-                `;
-  } else if (debtTable.style.display === "block") {
-    document.getElementById("table-body-debt").innerHTML = `
-                    <tr>
-                        <td><input type="text" placeholder="No."></td>
-                        <td><input type="text" placeholder="Guest Name"></td>
-                        <td><input type="text" placeholder="First Debt"></td>
-                        <td><input type="text" placeholder="Arise"></td>
-                        <td><input type="text" placeholder="Last Debt"></td>
-                    </tr>
-                `;
-  }
+  });
 }
 
-// Hiển thị toast
+
+
+// Hàm hiển thị thông báo toast
 function showToast(type) {
-  // Lấy phần tử toast tương ứng
-  const toast =
-    type === "success"
-      ? document.getElementById("toastSuccess")
-      : document.getElementById("toastError");
+  const toast = type === "success"
+    ? document.getElementById("toastSuccess")
+    : document.getElementById("toastError");
 
-  toast.classList.add("show");
+  toast.classList.add('show');
+  setTimeout(() => toast.classList.remove('show'), 3000); // Ẩn sau 3 giây
+}
 
-  setTimeout(() => {
-    toast.classList.remove("show");
-  }, 3000);
+function printTable() {
+    const tableBody = document.getElementById('table-body').innerHTML;
+
+    // Create a new iframe
+    const iframe = document.createElement('iframe');
+    document.body.appendChild(iframe);
+
+    // Set the iframe styles to hide it
+    iframe.style.position = 'absolute';
+    iframe.style.width = '0';
+    iframe.style.height = '0';
+    iframe.style.border = 'none';
+
+    // Write the content to the iframe
+    const doc = iframe.contentWindow.document;
+    doc.open();
+    doc.write(`
+        <html>
+            <head>
+                <title>Print Table</title>
+                <style>
+                    body { font-family: Arial, sans-serif; }
+                    table { width: 100%; border-collapse: collapse; }
+                    th, td { border: 1px solid #ddd; padding: 8px; text-align: left; }
+                    th { background-color: #f2f2f2; }
+                </style>
+            </head>
+            <body>
+                <h3>Date Report</h3>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>No.</th>
+                            <th>Book</th>
+                            <th>First Existence</th>
+                            <th>Arise</th>
+                            <th>Last Existence</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        ${tableBody}
+                    </tbody>
+                </table>
+            </body>
+        </html>
+    `);
+    doc.close();
+
+    // Print the iframe content
+    iframe.contentWindow.focus();
+    iframe.contentWindow.print();
+
+    // Remove the iframe after printing
+    iframe.parentNode.removeChild(iframe);
 }

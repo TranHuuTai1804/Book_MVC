@@ -3,7 +3,7 @@ let customers = [];
 // Hàm fetch danh sách khách hàng
 async function fetchCustomers() {
   try {
-    const response = await fetch("/profile");
+    const response = await fetch("receipts/profile");
     if (!response.ok) {
       throw new Error("Failed to fetch customers");
     }
@@ -52,28 +52,21 @@ function showCustomerSuggestions(inputElement) {
   suggestionsBox.style.display = "block";
 }
 
-// Khi chọn một gợi ý hoặc nhập đúng tên khách hàng
-function selectCustomer(customerName) {
-  const customer = customers.find((c) => c.name === customerName);
+// // Khi chọn một gợi ý hoặc nhập đúng tên khách hàng
+// function selectCustomer(customerName) {
+//   const customer = customers.find((c) => c.name === customerName);
 
-  if (customer) {
-    // Tự động điền thông tin khách hàng
-    document.getElementById("customer").value = customer.name;
-    document.getElementById("phone").value = customer.phone || "";
-    document.getElementById("address").value = customer.address || "";
-    document.getElementById("email").value = customer.email || "";
-  }
+//   if (customer) {
+//     // Tự động điền thông tin khách hàng
+//     document.getElementById("customer").value = customer.name;
+//     document.getElementById("phone").value = customer.phone || "";
+//     document.getElementById("address").value = customer.address || "";
+//     document.getElementById("email").value = customer.email || "";
+//   }
 
-  // Ẩn gợi ý
-  document.querySelector(".customerSuggestions").style.display = "none";
-}
-
-// Ẩn gợi ý khi click bên ngoài
-document.addEventListener("click", function (e) {
-  if (!e.target.closest(".form-group")) {
-    document.querySelector(".customerSuggestions").style.display = "none";
-  }
-});
+//   // Ẩn gợi ý
+//   document.querySelector(".customerSuggestions").style.display = "none";
+// }
 
 function toggleMenu() {
   const menu = document.getElementById("hero-menu");
@@ -138,33 +131,6 @@ dateInput.addEventListener("focus", function () {
   dateInput.value = getCurrentDate(); // Gán lại ngày hiện tại nếu có thay đổi
 });
 
-function submitReceipts() {
-  const form = document.getElementById("receipt-form");
-  const formData = new FormData(form);
-
-  const receiptData = {};
-  let hasEmptyField = false; // Kiểm tra nếu có trường bị bỏ trống
-
-  // Duyệt qua các trường trong form
-  formData.forEach((value, key) => {
-    receiptData[key] = value.trim(); // Loại bỏ khoảng trắng
-    if (!value.trim()) {
-      hasEmptyField = true;
-    }
-  });
-
-  if (hasEmptyField) {
-    showToast("error");
-    return;
-  }
-
-  console.log("Form data:", receiptData);
-
-  form.reset();
-
-  showToast("success");
-}
-
 // Hiển thị toast
 function showToast(type) {
   // Lấy phần tử toast tương ứng
@@ -178,4 +144,181 @@ function showToast(type) {
   setTimeout(() => {
     toast.classList.remove("show");
   }, 3000);
+}
+
+async function addBook() {
+  const bookId = document.getElementById('book-id').value;
+
+  // Fetch book data from the API
+  try {
+    const response = await fetch(`/api/books/${bookId}`);
+    if (!response.ok) {
+      throw new Error('Book not found');
+    }
+    const bookDatas = await response.json();
+
+    bookDatas.forEach(bookData => {
+      const tableBody = document.getElementById('book-table').getElementsByTagName('tbody')[0];
+      // Check if the book is already in session storage
+      const currentBooks = JSON.parse(sessionStorage.getItem('books')) || [];
+      const existingBook = currentBooks.find(book => book.ID_sach === bookData.ID_sach);
+
+      // Check if the book already exists in the table
+      const existingRow = Array.from(tableBody.rows).find(row => parseInt(row.cells[0].textContent) === bookData.ID_sach);
+
+      if (existingRow) {
+        // Update quantity
+        const quantityInput = existingRow.getElementsByTagName('input')[0];
+        quantityInput.value = parseInt(quantityInput.value) + 1; // Increment quantity
+        updateTotal(quantityInput, bookData.Gia); // Update total price for this book
+
+        // Update session storage quantity
+        if (existingBook) {
+          existingBook.quantity += 1; // Increment quantity in session storage
+        }
+      } else {
+        // Add new book data to the table
+        const newRow = tableBody.insertRow();
+        newRow.innerHTML = `
+                  <td>${bookData.ID_sach}</td>
+                  <td>${bookData.Ten_sach}</td>
+                  <td>${bookData.Ten_tac_gia}</td>
+                  <td>${bookData.Gia}</td>
+                  <td>
+                      <input type="number" value="1" min="1" onchange="updateTotal(this, ${bookData.Gia})">
+                  </td>
+                  <td class="total-price">${bookData.Gia}</td>
+                  <td><button type="button" onclick="removeBook(this)">Xóa</button></td>
+              `;
+        tableBody.appendChild(newRow);
+
+        // Store book data in session storage
+
+        currentBooks.push({
+          ID_sach: bookData.ID_sach,
+          Ten_sach: bookData.Ten_sach,
+          Ten_tac_gia: bookData.Ten_tac_gia,
+          Gia: bookData.Gia,
+          quantity: 1 // Default quantity
+        });
+        sessionStorage.setItem('books', JSON.stringify(currentBooks));
+      }
+    });
+  } catch (error) {
+    alert(error.message);
+  }
+  updateOverallTotal();
+}
+
+// Function to calculate and update the overall total amount
+function updateOverallTotal() {
+  const totalPriceCells = document.getElementsByClassName('total-price');
+  let grandTotal = 0;
+
+  for (let cell of totalPriceCells) {
+    grandTotal += parseFloat(cell.textContent);
+  }
+
+  // Update the total amount displayed
+  document.getElementById('total-amount').textContent = grandTotal.toFixed(2);
+}
+
+// Function to update the total price based on quantity
+function updateTotal(input, price) {
+  const quantity = parseInt(input.value);
+  const totalPriceCell = input.closest('tr').getElementsByClassName('total-price')[0];
+  const individualTotal = price * quantity;
+  totalPriceCell.textContent = individualTotal.toFixed(2); // Update individual total price
+
+  // Update overall total
+  updateOverallTotal();
+  // Update quantity in session storage
+  updateBooksInSessionStorage(input, quantity);
+}
+
+// Function to update the books in session storage
+function updateBooksInSessionStorage(input, quantity) {
+  // Get the current books from session storage
+  const booksString = sessionStorage.getItem('books');
+  const books = booksString ? JSON.parse(booksString) : [];
+
+  // Find the book related to this input
+  // Get the book ID from the input field
+  const bookId = document.getElementById('book-id').value.trim(); // Use the input field's value
+
+  const bookIndex = books.findIndex(book => book.ID_sach === bookId); // Adjust to match the property name
+
+  console.log('Current books in session storage:', books);
+  console.log('Book ID:', bookId);
+  console.log('Book Index:', bookIndex);
+  console.log('Updated Quantity:', quantity);
+
+  if (bookIndex !== -1) {
+    // Update the quantity for the specific book
+    books[bookIndex].quantity = quantity;
+    console.log(`Updated quantity for ${bookId}:`, books[bookIndex].quantity);
+  } else {
+    console.warn(`Book with ID ${bookId} not found.`);
+  }
+
+  // Save the updated books array back to session storage
+  sessionStorage.setItem('books', JSON.stringify(books));
+}
+
+function removeBook(button) {
+  const row = button.parentNode.parentNode;
+  row.parentNode.removeChild(row);
+  updateOverallTotal();
+  sessionStorage.removeItem('books');
+}
+
+async function submitForm() {
+  // const form = document.getElementById('receipt-form');
+  // if (form.checkValidity()) {
+  //   // If the form is valid, submit it
+  //   form.submit();
+  // } else {
+  //   // If invalid, show validation messages
+  //   form.reportValidity();
+  // }
+  // Gather form data
+  // Gather form data
+  const booksString = sessionStorage.getItem('books'); // Get books from session storage
+  console.log(booksString);
+  const formData = {
+    dateReceipt: document.getElementById('date-receipt').value,
+    invoiceId: document.getElementById('invoice-id').value,
+    customerId: document.getElementById('customer-id').value,
+    customer: document.getElementById('customer').value,
+    phone: document.getElementById('phone').value,
+    email: document.getElementById('email').value,
+    address: document.getElementById('address').value,
+    books: booksString ? JSON.parse(booksString) : [], // Use an empty array if null
+    total: document.getElementById('total-amount').textContent,
+  };
+  console.log(formData.books);
+
+  // Send the data to the server
+  try {
+    const response = await fetch('/api/submitInfo', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(formData),
+    });
+
+    if (!response.ok) {
+      throw new Error('Failed to submit the form');
+    }
+
+    const result = await response.json();
+    alert(result.message); // Show success message
+
+    // Optionally reset the form
+    document.getElementById('receipt-form').reset();
+    sessionStorage.removeItem('books'); // Clear session storage after submitting
+  } catch (error) {
+    alert(error.message); // Show error message
+  }
 }

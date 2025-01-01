@@ -91,7 +91,6 @@
     margin: 0; 
 }
 
-/* Customer Section */
 .customer-section {
     display: flex;
     align-items: center;
@@ -110,7 +109,7 @@
     font-weight: 700;
 }
 
-.customer {
+/* .customer {
     display: flex;
     align-items: center;
     gap: 10px;
@@ -121,7 +120,7 @@
     align-items: center;
     gap: 10px;
 
-}
+} */
 
 
 .date {
@@ -146,6 +145,7 @@
     margin-bottom: 26px;
     padding: 0 6%;
     font-weight: 700;
+    position: relative;
 }
 
 .table-container {
@@ -214,7 +214,7 @@ input[type="text"], input[type="number"] {
     text-align: center;
     font-weight: bold;
     position: absolute; 
-    bottom: 50px; 
+    bottom: 0; 
     right: 89px; 
     width: 150px; 
 }
