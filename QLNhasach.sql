@@ -25,10 +25,11 @@ CREATE TABLE Phieu_nhap_sach (
 
 -- Tạo bảng Chi_tiet_phieu_nhap_sach
 CREATE TABLE Chi_tiet_phieu_nhap_sach (
-    ID_Chi_tiet INT AUTO_INCREMENT PRIMARY KEY,
+    ID_Chi_tiet INT,
     ID_Phieu INT,
     ID_Sach INT,
     So_luong INT,
+    PRIMARY KEY (ID_Phieu, ID_Chi_tiet),  -- Set composite primary key
     FOREIGN KEY (ID_Phieu) REFERENCES Phieu_nhap_sach(ID_Phieu),
     FOREIGN KEY (ID_Sach) REFERENCES Sach(ID_sach)
 );
@@ -63,12 +64,13 @@ CREATE TABLE Hoa_don_ban_sach (
 
 -- Tạo bảng Chi_tiet_hoa_don
 CREATE TABLE Chi_tiet_hoa_don (
-    ID_Chi_tiet_hoa_don INT AUTO_INCREMENT PRIMARY KEY,
+    ID_Chi_tiet_hoa_don INT,
     ID_Hoa_don CHAR(5),
     ID_Sach INT,
     So_luong INT,
     Don_gia DECIMAL(10, 2),
     Thanh_tien DECIMAL(10, 2),
+    PRIMARY KEY (ID_Hoa_don, ID_Chi_tiet_hoa_don),  -- Set composite primary key
     FOREIGN KEY (ID_Hoa_don) REFERENCES Hoa_don_ban_sach(ID_Hoa_don),
     FOREIGN KEY (ID_Sach) REFERENCES Sach(ID_sach)
 );
@@ -150,32 +152,31 @@ INSERT INTO Phieu_nhap_sach (Ngay_nhap, Tong_so_luong, ID_sach) VALUES
 ('2024-12-16 10:10:00', 185, 24),
 ('2024-12-16 12:30:00', 195, 25);
 
-INSERT INTO Chi_tiet_phieu_nhap_sach (ID_Phieu, ID_Sach, So_luong) VALUES  
-(1, 1, 180),  
-(2, 2, 150),  
-(3, 3, 180),  
-(4, 4, 185),  
-(5, 5, 160),  
-(6, 6, 170),  
-(7, 7, 150),  
-(8, 8, 170),  
-(9, 9, 150),  
-(10, 10, 160),  
-(11, 11, 140),  
-(12, 12, 155),  
-(13, 13, 150),  
-(14, 14, 160),  
-(15, 15, 245),  
-(16, 16, 150),  
-(17, 17, 160),  
-(18, 18, 170),  
-(19, 19, 155),  
-(20, 20, 150),  
-(21, 21, 170),  
-(22, 22, 245),  
-(23, 23, 180),  
-(24, 24, 185),  
-(25, 25, 195);
+INSERT INTO Chi_tiet_phieu_nhap_sach (ID_Phieu, ID_Chi_tiet, ID_Sach, So_luong) VALUES  
+(1, 1, 1, 180),  
+(2, 1, 2, 150),  
+(2, 2, 2, 150),  
+(3, 1, 3, 180),  
+(4, 1, 4, 185),  
+(5, 1, 5, 160),  
+(6, 1, 6, 170),  
+(7, 1, 7, 150),  
+(8, 1, 8, 170),  
+(9, 1, 9, 150),  
+(10, 1, 10, 160),  
+(11, 1, 11, 140),  
+(12, 1, 12, 155),  
+(13, 1, 13, 150),  
+(14, 1, 14, 160),  
+(15, 1, 15, 245),  
+(16, 1, 16, 150),  
+(17, 1, 17, 160),  
+(18, 1, 18, 170),  
+(19, 1, 19, 155),  
+(20, 1, 20, 150),  
+(21, 1, 21, 170),  
+(22, 1, 22, 245),  
+(23, 1, 23, 180);
 
 INSERT INTO Khach_hang (Ten_khach_hang, So_dien_thoai, Gioi_tinh, Email, Dia_chi) VALUES  
 ('Nguyễn Văn A', '0912345678', 'M', 'nguyenvana@gmail.com', 'Hà Nội'),  
@@ -268,42 +269,42 @@ INSERT INTO Hoa_don_ban_sach (ID_Hoa_don, ID_khach_hang, Ngay_lap_hoa_don, Tong_
 ('HD034', 22, '2024-12-15 11:45:00', 41.98),  
 ('HD035', 21, '2024-12-25 16:00:00', 75.00);
 
-INSERT INTO Chi_tiet_hoa_don (ID_Hoa_don, ID_Sach, So_luong, Don_gia, Thanh_tien) VALUES  
-(1, 1, 2, 15.99, 31.98),  
-(2, 3, 3, 25.00, 75.00),  
-(3, 2, 5, 18.50, 92.50),  
-(4, 4, 1, 19.99, 19.99),  
-(5, 5, 2, 22.00, 44.00),  
-(6, 6, 3, 14.99, 44.97),
-(7, 7, 4, 20.00, 80.00),  
-(8, 8, 2, 15.50, 31.00),  
-(9, 9, 1, 25.99, 25.99),  
-(10, 10, 3, 18.00, 54.00),  
-(11, 11, 2, 21.00, 42.00),  
-(12, 12, 1, 19.50, 19.50),  
-(13, 13, 5, 17.99, 89.95),  
-(14, 14, 2, 16.50, 33.00),  
-(15, 15, 4, 20.99, 83.96),  
-(16, 16, 3, 18.75, 56.25),  
-(17, 17, 2, 22.50, 45.00),  
-(18, 18, 1, 14.99, 14.99),  
-(19, 19, 6, 15.00, 90.00),  
-(20, 20, 2, 23.50, 47.00),  
-(21, 21, 3, 20.00, 60.00),
-(22, 1, 3, 15.99, 47.97),  
-(23, 5, 2, 20.00, 40.00),  
-(24, 2, 4, 18.50, 74.00),  
-(25, 6, 1, 14.99, 14.99),  
-(26, 3, 2, 25.00, 50.00),  
-(27, 7, 5, 20.00, 100.00),  
-(28, 4, 3, 19.99, 59.97),  
-(29, 8, 2, 15.50, 31.00),  
-(30, 9, 1, 25.99, 25.99),  
-(31, 10, 2, 18.00, 36.00),  
-(32, 11, 3, 21.00, 63.00),  
-(33, 12, 1, 19.50, 19.50),
-(34, 13, 2, 20.99, 41.98),  
-(35, 14, 4, 18.75, 75.00);  
+INSERT INTO Chi_tiet_hoa_don (ID_Hoa_don, ID_Chi_tiet_hoa_don, ID_Sach, So_luong, Don_gia, Thanh_tien) VALUES  
+('HD001', 1, 2, 2, 15.99, 31.98),  
+('HD002', 1, 3, 3, 25.00, 75.00),  
+('HD003', 1, 5, 5, 18.50, 92.50),  
+('HD004', 1, 1, 1, 19.99, 19.99),  
+('HD005', 1, 2, 2, 22.00, 44.00),  
+('HD006', 1, 3, 3, 14.99, 44.97),  
+('HD007', 2, 4, 4, 20.00, 80.00),  
+('HD008', 2, 2, 2, 15.50, 31.00),  
+('HD009', 2, 1, 1, 25.99, 25.99),  
+('HD010', 2, 3, 3, 18.00, 54.00),  
+('HD011', 3, 2, 2, 21.00, 42.00),  
+('HD012', 3, 1, 1, 19.50, 19.50),  
+('HD013', 4, 5, 5, 17.99, 89.95),  
+('HD014', 4, 2, 2, 16.50, 33.00),  
+('HD015', 4, 4, 4, 20.99, 83.96),  
+('HD016', 5, 3, 3, 18.75, 56.25),  
+('HD017', 5, 2, 2, 22.50, 45.00),  
+('HD018', 5, 1, 1, 14.99, 14.99),  
+('HD019', 6, 6, 6, 15.00, 90.00),  
+('HD020', 6, 2, 2, 23.50, 47.00),  
+('HD021', 6, 3, 3, 20.00, 60.00),  
+('HD022', 7, 3, 3, 15.99, 47.97),  
+('HD023', 7, 2, 2, 20.00, 40.00),  
+('HD024', 8, 4, 4, 18.50, 74.00),  
+('HD025', 8, 1, 1, 14.99, 14.99),  
+('HD026', 9, 2, 2, 25.00, 50.00),  
+('HD027', 9, 5, 5, 20.00, 100.00),  
+('HD028', 10, 3, 3, 19.99, 59.97),  
+('HD029', 10, 2, 2, 15.50, 31.00),  
+('HD030', 10, 1, 1, 25.99, 25.99),  
+('HD031', 11, 2, 2, 18.00, 36.00),  
+('HD032', 11, 3, 3, 21.00, 63.00),  
+('HD033', 12, 1, 1, 19.50, 19.50),  
+('HD034', 12, 2, 2, 20.99, 41.98),  
+('HD035', 13, 4, 4, 18.75, 75.00);
 
 INSERT INTO Quy_dinh (So_luong_nhap_it_nhat, So_luong_ton_it_hon, Khach_hang_no_khong_qua, So_luong_ton_sau_khi_ban_it_nhat, Su_Dung_QD4) VALUES  
 (150, 300, 20000, 20, 1);
