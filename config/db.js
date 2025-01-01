@@ -6,7 +6,7 @@ dotenv.config();
 const connection = mysql.createConnection({
   host: "localhost",
   user: "root",
-  password: "20082004",
+  password: "",
   database: "QLNhasach",
 });
 

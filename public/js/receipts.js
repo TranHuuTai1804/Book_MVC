@@ -1,72 +1,4 @@
-let customers = [];
-
-// Hàm fetch danh sách khách hàng
-async function fetchCustomers() {
-  try {
-    const response = await fetch("receipts/profile");
-    if (!response.ok) {
-      throw new Error("Failed to fetch customers");
-    }
-    const data = await response.json();
-    customers = data.map((customer) => ({
-      name: customer.Ten_khach_hang,
-      phone: customer.So_dien_thoai,
-      address: customer.Dia_chi,
-      email: customer.Email,
-    }));
-  } catch (error) {
-    console.error("Error fetching customers:", error);
-  }
-}
-
-// Gọi fetch khi trang tải
-document.addEventListener("DOMContentLoaded", fetchCustomers);
-
-// Hiển thị gợi ý khách hàng
-function showCustomerSuggestions(inputElement) {
-  const suggestionsBox = document.querySelector(".customerSuggestions");
-  const searchTerm = inputElement.value.trim().toLowerCase();
-
-  if (!searchTerm) {
-    suggestionsBox.style.display = "none";
-    return;
-  }
-
-  // Lọc khách hàng phù hợp
-  const filteredCustomers = customers.filter((customer) =>
-    customer.name.toLowerCase().includes(searchTerm)
-  );
-
-  if (filteredCustomers.length === 0) {
-    suggestionsBox.style.display = "none";
-    return;
-  }
-
-  // Hiển thị gợi ý
-  suggestionsBox.innerHTML = filteredCustomers
-    .map(
-      (customer) =>
-        `<div onclick="selectCustomer('${customer.name}')">${customer.name}</div>`
-    )
-    .join("");
-  suggestionsBox.style.display = "block";
-}
-
-// // Khi chọn một gợi ý hoặc nhập đúng tên khách hàng
-// function selectCustomer(customerName) {
-//   const customer = customers.find((c) => c.name === customerName);
-
-//   if (customer) {
-//     // Tự động điền thông tin khách hàng
-//     document.getElementById("customer").value = customer.name;
-//     document.getElementById("phone").value = customer.phone || "";
-//     document.getElementById("address").value = customer.address || "";
-//     document.getElementById("email").value = customer.email || "";
-//   }
-
-//   // Ẩn gợi ý
-//   document.querySelector(".customerSuggestions").style.display = "none";
-// }
+sessionStorage.removeItem('books');
 
 function toggleMenu() {
   const menu = document.getElementById("hero-menu");
@@ -147,35 +79,46 @@ function showToast(type) {
 }
 
 async function addBook() {
-  const bookId = document.getElementById('book-id').value;
+  const bookId = document.getElementById('book-id').value.trim(); // Get and trim the input value
+
+  // Check if the input is empty
+  if (!bookId) {
+    alert('Vui lòng nhập ID sách hoặc tên sách.'); // Alert the user to enter a value
+    return; // Exit the function if the input is empty
+  }
 
   // Fetch book data from the API
   try {
     const response = await fetch(`/api/books/${bookId}`);
+
+    // Check if the response indicates that the book was not found
     if (!response.ok) {
-      throw new Error('Book not found');
+      // Show a message if the book does not exist
+      alert('Không tìm thấy sách với ID hoặc tên này.'); // Alert the user that the book does not exist
+      return; // Exit the function
     }
+
     const bookDatas = await response.json();
+
+    // Check if bookDatas is empty
+    if (bookDatas.length === 0) {
+      alert('Không tìm thấy sách với ID hoặc tên này.'); // Alert the user that the book does not exist
+      return; // Exit the function
+    }
 
     bookDatas.forEach(bookData => {
       const tableBody = document.getElementById('book-table').getElementsByTagName('tbody')[0];
+
       // Check if the book is already in session storage
       const currentBooks = JSON.parse(sessionStorage.getItem('books')) || [];
-      const existingBook = currentBooks.find(book => book.ID_sach === bookData.ID_sach);
-
-      // Check if the book already exists in the table
       const existingRow = Array.from(tableBody.rows).find(row => parseInt(row.cells[0].textContent) === bookData.ID_sach);
 
       if (existingRow) {
         // Update quantity
         const quantityInput = existingRow.getElementsByTagName('input')[0];
         quantityInput.value = parseInt(quantityInput.value) + 1; // Increment quantity
-        updateTotal(quantityInput, bookData.Gia); // Update total price for this book
-
-        // Update session storage quantity
-        if (existingBook) {
-          existingBook.quantity += 1; // Increment quantity in session storage
-        }
+        updateTotal(quantityInput, bookData.Gia, bookData.ID_sach); // Update total price for this book
+        updateBooksInSessionStorage(bookData.ID_sach, quantityInput.value); // Update session storage
       } else {
         // Add new book data to the table
         const newRow = tableBody.insertRow();
@@ -185,7 +128,7 @@ async function addBook() {
                   <td>${bookData.Ten_tac_gia}</td>
                   <td>${bookData.Gia}</td>
                   <td>
-                      <input type="number" value="1" min="1" onchange="updateTotal(this, ${bookData.Gia})">
+                      <input type="number" value="1" min="1" onchange="updateTotal(this, ${bookData.Gia}, ${bookData.ID_sach})">
                   </td>
                   <td class="total-price">${bookData.Gia}</td>
                   <td><button type="button" onclick="removeBook(this)">Xóa</button></td>
@@ -193,7 +136,6 @@ async function addBook() {
         tableBody.appendChild(newRow);
 
         // Store book data in session storage
-
         currentBooks.push({
           ID_sach: bookData.ID_sach,
           Ten_sach: bookData.Ten_sach,
@@ -205,7 +147,7 @@ async function addBook() {
       }
     });
   } catch (error) {
-    alert(error.message);
+    alert('Đã xảy ra lỗi: ' + error.message); // Show a generic error message
   }
   updateOverallTotal();
 }
@@ -224,7 +166,7 @@ function updateOverallTotal() {
 }
 
 // Function to update the total price based on quantity
-function updateTotal(input, price) {
+function updateTotal(input, price, id) {
   const quantity = parseInt(input.value);
   const totalPriceCell = input.closest('tr').getElementsByClassName('total-price')[0];
   const individualTotal = price * quantity;
@@ -232,33 +174,25 @@ function updateTotal(input, price) {
 
   // Update overall total
   updateOverallTotal();
+
   // Update quantity in session storage
-  updateBooksInSessionStorage(input, quantity);
+  updateBooksInSessionStorage(id, quantity); // Pass the book ID and updated quantity
 }
 
 // Function to update the books in session storage
-function updateBooksInSessionStorage(input, quantity) {
+function updateBooksInSessionStorage(bookId, quantity) {
   // Get the current books from session storage
   const booksString = sessionStorage.getItem('books');
   const books = booksString ? JSON.parse(booksString) : [];
 
-  // Find the book related to this input
-  // Get the book ID from the input field
-  const bookId = document.getElementById('book-id').value.trim(); // Use the input field's value
-
-  const bookIndex = books.findIndex(book => book.ID_sach === bookId); // Adjust to match the property name
-
-  console.log('Current books in session storage:', books);
-  console.log('Book ID:', bookId);
-  console.log('Book Index:', bookIndex);
-  console.log('Updated Quantity:', quantity);
+  // Find the book related to this input (by ID)
+  const bookIndex = books.findIndex(book => book.ID_sach === bookId);
 
   if (bookIndex !== -1) {
     // Update the quantity for the specific book
-    books[bookIndex].quantity = quantity;
-    console.log(`Updated quantity for ${bookId}:`, books[bookIndex].quantity);
+    books[bookIndex].quantity = quantity; // Set the quantity to match the input
   } else {
-    console.warn(`Book with ID ${bookId} not found.`);
+    console.warn(`Book with ID "${bookId}" not found.`);
   }
 
   // Save the updated books array back to session storage
@@ -266,37 +200,46 @@ function updateBooksInSessionStorage(input, quantity) {
 }
 
 function removeBook(button) {
-  const row = button.parentNode.parentNode;
-  row.parentNode.removeChild(row);
-  updateOverallTotal();
-  sessionStorage.removeItem('books');
-}
+  const row = button.parentNode.parentNode; // Get the row of the book to be removed
+  const bookId = row.cells[0].textContent; // Assuming the first cell contains the book ID
 
+  // Remove the row from the table
+  row.parentNode.removeChild(row);
+
+  // Update overall total
+  updateOverallTotal();
+
+  // Remove the book from session storage
+  const currentBooks = JSON.parse(sessionStorage.getItem('books')) || [];
+
+  // Filter out the book to be removed
+  const updatedBooks = currentBooks.filter(book => book.ID_sach !== bookId);
+
+  // Update session storage
+  sessionStorage.setItem('books', JSON.stringify(updatedBooks));
+}
 async function submitForm() {
-  // const form = document.getElementById('receipt-form');
-  // if (form.checkValidity()) {
-  //   // If the form is valid, submit it
-  //   form.submit();
-  // } else {
-  //   // If invalid, show validation messages
-  //   form.reportValidity();
-  // }
-  // Gather form data
+  const form = document.getElementById('receipt-form');
+  if (form.checkValidity()) {
+    // If the form is valid, submit it
+    form.submit();
+  } else {
+    // If invalid, show validation messages
+    form.reportValidity();
+  }
   // Gather form data
   const booksString = sessionStorage.getItem('books'); // Get books from session storage
-  console.log(booksString);
   const formData = {
     dateReceipt: document.getElementById('date-receipt').value,
     invoiceId: document.getElementById('invoice-id').value,
-    customerId: document.getElementById('customer-id').value,
     customer: document.getElementById('customer').value,
     phone: document.getElementById('phone').value,
     email: document.getElementById('email').value,
+    gender: document.querySelector('input[name="gender"]:checked')?.value, // Get selected gender
     address: document.getElementById('address').value,
     books: booksString ? JSON.parse(booksString) : [], // Use an empty array if null
     total: document.getElementById('total-amount').textContent,
   };
-  console.log(formData.books);
 
   // Send the data to the server
   try {
@@ -321,4 +264,35 @@ async function submitForm() {
   } catch (error) {
     alert(error.message); // Show error message
   }
+}
+
+function checkCustomer() {
+  const phoneInput = document.getElementById('phone').value;
+
+  // Check if the phone number is 10 digits long
+  if (phoneInput.length !== 10 || isNaN(phoneInput)) {
+    alert("Vui lòng nhập số điện thoại gồm 10 chữ số.");
+    return;
+  }
+
+  // Call the server to check if the customer exists
+  fetch('/check-customer', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify({ phone: phoneInput })
+  })
+    .then(response => response.json())
+    .then(data => {
+      if (data.exists) {
+        // Populate the form fields with the customer data
+        document.getElementById('customer').value = data.name;
+        document.getElementById('email').value = data.email;
+        document.getElementById('address').value = data.address;
+      }
+    })
+    .catch(error => {
+      console.error('Error:', error);
+    });
 }

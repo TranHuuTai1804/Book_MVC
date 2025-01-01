@@ -317,3 +317,76 @@ input[type="text"], input[type="email"] {
 .done-btn:hover {
     background-color: #5fa68d;
 }
+
+/* Table */
+
+.table-container {
+    width: 100%;
+    overflow-x: auto;
+    padding: 0 6%;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+table th, table td {
+    padding: 10px;
+    text-align: left;
+    border: 1px solid #ddd;
+}
+
+table thead {
+    background-color: #B9B9B9;
+}
+
+table tbody tr:nth-child(odd) {
+    background-color: #f9f9f9;
+}
+
+table tbody tr:nth-child(even) {
+    background-color: #fff;
+}
+
+/* From */
+
+.form-container {
+    margin: 20px;
+}
+
+.form-container button {
+    padding: 10px 10px;
+    background-color: #007BFF;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+.form-container button:hover {
+    background-color: #0056b3;
+}
+
+.two-column-form {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 15px; /* Space between form fields */
+}
+
+label {
+    margin-bottom: 5px;
+}
+
+input {
+    padding: 8px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+}
+
+.book-input-container {
+    margin-top: 20px; /* Adds space above the book input section */
+}
+
+.address-group {
+    grid-column: span 2; /* This will make the address input span across both columns */
+}

@@ -38,18 +38,14 @@
                 </div>
 
                 <div class="form-group">
-                    <label for="customer-id">Mã khách hàng:</label>
-                    <input type="text" id="customer-id" name="customer-id" placeholder="Nhập mã khách hàng" required>
-                </div>
-
-                <div class="form-group">
                     <label for="customer">Tên khách hàng:</label>
                     <input type="text" id="customer" name="customer" placeholder="Nhập tên khách hàng" required>
                 </div>
 
                 <div class="form-group">
                     <label for="phone">Số điện thoại:</label>
-                    <input type="text" id="phone" name="phone" placeholder="Nhập số điện thoại" required>
+                    <input type="text" id="phone" name="phone" placeholder="Nhập số điện thoại" onblur="checkCustomer()"
+                        required>
                 </div>
 
                 <div class="form-group">
@@ -58,20 +54,35 @@
                 </div>
 
                 <div class="form-group">
+                    <label>Giới tính:</label>
+                    <div>
+                        <label>
+                            <input type="radio" name="gender" value="M" required checked> Nam
+                        </label>
+                        <label>
+                            <input type="radio" name="gender" value="F"> Nữ
+                        </label>
+                    </div>
+                </div>
+
+                <div class="form-group address-group">
                     <label for="address">Địa chỉ:</label>
                     <input type="text" id="address" name="address" placeholder="Nhập địa chỉ" required>
                 </div>
+
+                
             </form>
+        </div>
 
-            <div class="book-input-container">
-                <div class="form-group">
-                    <label for="book-id">ID sách hoặc tên sách:</label>
-                    <input type="text" id="book-id" name="book-id" placeholder="Nhập ID hoặc tên sách" required>
-                    <button type="button" onclick="addBook()">Thêm sách vào</button>
-                </div>
+        <div class="book-input-container">
+            <div class="form-group">
+                <label for="book-id">ID sách hoặc tên sách:</label>
+                <input type="text" id="book-id" name="book-id" placeholder="Nhập ID hoặc tên sách" required>
+                <button type="button" onclick="addBook()">Thêm sách vào</button>
             </div>
+        </div>
 
-            <button type="button" onclick="submitForm()">Gửi thông tin</button>
+        <button type="button" onclick="submitForm()">Gửi thông tin</button>
         </div>
 
         <table id="book-table">
