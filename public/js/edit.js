@@ -39,7 +39,7 @@ document.addEventListener("DOMContentLoaded", () => {
             regulation.So_luong_ton_sau_khi_ban_it_nhat
           }" class="input-field" readonly></td>
           <td>
-          <select class="input-field" id="rule" name="rule"  disabled>
+          <select class="input-field" id="rule" name="rule" disabled>
             <option value="0" ${
               regulation.Su_Dung_QD4.data[0] === 0 ? "selected" : ""
             }>Off</option>
@@ -58,11 +58,11 @@ document.addEventListener("DOMContentLoaded", () => {
   editBtn.addEventListener("click", (event) => {
     event.preventDefault(); // Ngừng hành động mặc định nếu cần
 
-    // Lấy tất cả các ô input trong bảng và cho phép chỉnh sửa
+    // Lấy tất cả các ô input và select trong bảng và cho phép chỉnh sửa
     const inputs = document.querySelectorAll(".input-field");
     inputs.forEach((input) => {
       input.removeAttribute("readonly");
-      input.removeAttribute("disabled");
+      input.removeAttribute("disabled"); // Bỏ thuộc tính disabled đối với <select>
     });
 
     // Hiển thị nút Done
@@ -74,10 +74,11 @@ document.addEventListener("DOMContentLoaded", () => {
     // Ẩn nút Done sau khi lưu xong
     doneBtn.classList.remove("active");
 
-    // Chỉnh sửa lại trạng thái các ô input (set readonly hoặc disabled)
+    // Chỉnh sửa lại trạng thái các ô input và select (set readonly hoặc disabled)
     const inputs = document.querySelectorAll(".input-field");
     inputs.forEach((input) => {
-      input.setAttribute("readonly", "true"); // Đặt lại thành readonly
+      input.setAttribute("readonly", "true"); // Đặt lại thành readonly đối với <input>
+      input.setAttribute("disabled", "true"); // Đặt lại thành disabled đối với <select>
     });
   });
 
