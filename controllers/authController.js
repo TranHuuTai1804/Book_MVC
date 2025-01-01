@@ -1,4 +1,3 @@
-// controllers/authController.js
 const bcrypt = require("bcrypt");
 const userModel = require("../models/userModel");
 
@@ -31,8 +30,9 @@ const login = (req, res) => {
       );
     }
 
-    if (password === user.password) {
-      req.session.user = { id: user.id, email: user.email };
+    // So sánh mật khẩu đã nhập với mật khẩu đã mã hóa
+    if (bcrypt.compareSync(password, user.password)) {
+      req.session.user = { id: user.id, email: email }; // Lưu thông tin vào session
       return res.redirect(
         "/home?message=" + encodeURIComponent("Đăng nhập thành công!")
       );
@@ -70,6 +70,7 @@ const signup = (req, res) => {
       );
     }
 
+    // Mã hóa mật khẩu trước khi lưu
     const hashedPassword = bcrypt.hashSync(password, 10);
 
     userModel.createUser(email, hashedPassword, (err) => {

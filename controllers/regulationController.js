@@ -26,7 +26,8 @@ const updateRegulation = async (req, res) => {
       return res.status(404).json({ message: "Quy định không tồn tại!" });
     }
 
-    res.redirect("/edit");
+    // Chuyển hướng đến trang chỉnh sửa với thông báo thành công
+    return res.redirect("/edit?message=Cập nhật quy định thành công");
   } catch (err) {
     console.error("Lỗi khi cập nhật quy định:", err);
     return res.status(500).json({
@@ -38,7 +39,7 @@ const updateRegulation = async (req, res) => {
 
 // Hiển thị trang chỉnh sửa Quy_định
 const renderEditPage = (req, res) => {
-  const message = req.query.message || "";
+  const message = req.query.message || ""; // Lấy thông báo từ query string
 
   res.render("edit", { message });
 };
