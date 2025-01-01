@@ -92,8 +92,7 @@ const addBook = async (req, res) => {
         // Lấy ID_sach lớn nhất và tạo ID mới
         const maxBookIdResult = await bookEmpty.getMaxBookId();
         id_sach = maxBookIdResult ? maxBookIdResult + 1 : 1;
-        console.log("Max id sach:", id_sach);
-
+      
         // Thêm sách mới
         await bookEmpty.addNewBook({ ...book, id: id_sach });
 
@@ -109,9 +108,9 @@ const addBook = async (req, res) => {
         book.quantity,
         id_sach
       );
-      console.log("Thêm phiếu nhập:", invoiceId );
+    
       await bookEmpty.addImportInvoiceDetail(invoiceId, id_sach, book.quantity);
-      console.log("Thêm chi tiết phiếu nhập:", invoiceId );
+  
     }
 
     res.redirect(
