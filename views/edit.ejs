@@ -22,6 +22,7 @@
 
     <div class="date-section">
         <table class="table-container">
+        <form  method="POST" action="/editRegulation">
             <thead>
                 <tr>
                     <th>Minimal Inputs</th>
@@ -35,32 +36,13 @@
                 <!-- Existing customers will be populated here -->
             </tbody>
         </table>
-        <button class="add-row-btn"><img src="/img/edit.png" alt="" class="edit"></button>
+        <div class="button-btn">
+        <button class="edit-btn">Edit</button>
+        <button type="submit" class="done-btn">Done</button>
+        </div>
+    </form>
     </div>
 
-    <div id="addCustomerForm">
-        <h3>Edit Regulation</h3>
-        <form id="customerForm" method="POST" action="/editRegulation">
-            <label for="min_input">Minimal Inputs</label>
-            <input type="text" id="min_input" name="min_input" required>
-        
-            <label for="low_inventory">Low Inventory</label>
-            <input type="text" id="low_inventory" name="low_inventory" required>
-        
-            <label for="low_customer_debt">Low Customer Debt</label>
-            <input type="text" id="low_customer_debt" name="low_customer_debt" required>
-        
-            <label for="stock_after_sale">Stock After Sale</label>
-            <input type="text" id="stock_after_sale" name="stock_after_sale" required>
-        
-            <label for="rule">Rules On/Off</label>
-            <input type="text" id="rule" name="rule" required>
-        
-            <button type="submit">Update</button>
-            <button type="button" id="cancelButton">Cancel</button>
-        </form>
-    </div>
-    
 
     <button class="open-menu" onclick="toggleMenu()">></button>
 
