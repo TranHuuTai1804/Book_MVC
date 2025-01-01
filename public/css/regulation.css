@@ -315,30 +315,65 @@ input[type="text"], input[type="number"] {
     background-color: #F5DD85; 
 }
 
-/* Edit page */ 
-.add-row-btn .edit {
-    width: 20px;
-    height: 20px;
+.button-btn{
+    display: flex;
+    gap: 15px;
+    margin-top: 10px;
 }
 
-.add-row-btn {
-    margin-top: 16px;
-    background-color: #72C2AE;
-    color: white;
-    font-size: 2rem;
+.edit-btn,
+.done-btn {
+  padding: 10px 20px;
+  border: none;
+  cursor: pointer;
+}
+
+/* Style cho nút Edit */
+.edit-btn {
     padding: 10px 20px;
+    background-color: #3498db;
+    color: white;
     border: none;
     border-radius: 5px;
-    cursor: pointer;
-    width: 5%;
-    text-align: center;
+    font-size: 1.6rem;
     font-weight: bold;
+    cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.2s ease;
 }
 
-.add-row-btn:hover {
-    background-color: #5fa68d;
+.edit-btn:hover {
+    background-color: #217dbb;
+    transform: translateY(-3px);
+    box-shadow: 0 5px 10px rgba(0, 0, 0, 0.2);
 }
 
+/* Style cho nút Done */
+.done-btn {
+    padding: 10px 20px;
+    background-color: #95a5a6; /* Màu xám ban đầu */
+    color: white;
+    border: none;
+    border-radius: 5px;
+    font-size: 1.6rem;
+    font-weight: bold;
+    cursor: not-allowed; /* Đặt con trỏ chuột thành not-allowed */
+    transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+.done-btn:hover {
+    background-color: #7f8c8d; /* Màu xám tối hơn khi hover */
+    transform: translateY(-3px);
+    box-shadow: 0 5px 10px rgba(0, 0, 0, 0.2);
+}
+
+.done-btn.active {
+    background-color: #2ecc71; /* Màu ban đầu khi trở lại bình thường */
+    cursor: pointer;
+}
+
+.done-btn.active:hover {
+    background-color: #27ae60;
+}
 
 /* Style cho toast */
 .toast, .toastError {
