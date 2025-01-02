@@ -30,7 +30,7 @@ const login = (req, res) => {
           )
       );
     }
-
+    console.log(user);
     if (password === user.password) {
       req.session.user = { id: user.id, email: user.email };
       return res.redirect(

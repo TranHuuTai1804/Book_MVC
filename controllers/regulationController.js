@@ -10,8 +10,9 @@ const updateRegulation = async (req, res) => {
     rule,
   } = req.body;
 
+  let ruleText = 0;
   // Chuyển đổi rule sang số 0 hoặc 1
-  const ruleBit = parseInt(rule) === 1 ? 1 : 0;
+  if (rule === "Yes") ruleText = 1;
 
   try {
     const result = await regulationModel.updateRegulation(
@@ -19,7 +20,7 @@ const updateRegulation = async (req, res) => {
       low_inventory,
       low_customer_debt,
       stock_after_sale,
-      ruleBit
+      ruleText
     );
 
     if (result.affectedRows === 0) {

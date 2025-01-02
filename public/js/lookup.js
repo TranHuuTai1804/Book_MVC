@@ -24,6 +24,8 @@ async function fetchSoLuongTonItHon() {
 
 // Khởi tạo mảng chứa tên sách
 let bookTitles = [];
+let authors = [];
+let autoInput = [];
 
 // Hàm lấy danh sách sách từ API và cập nhật mảng bookTitles
 async function fetchBookTitles() {
@@ -35,7 +37,10 @@ async function fetchBookTitles() {
     const books = await response.json();
 
     // Cập nhật mảng bookTitles với danh sách tên sách
-    bookTitles = books.map((book) => book.Ten_sach);
+    bookTitles = books.map((book) => "Book: " + book.Ten_sach);
+    const authorsTemp = books.map((book) => "Author: " + book.Ten_tac_gia);
+    authors = [...new Set(authorsTemp)];
+    autoInput = bookTitles.concat(authors);
 
     // Đảm bảo rằng kết quả được hiển thị sau khi dữ liệu đã được lấy
     console.log("Danh sách tên sách hiện tại:", bookTitles);
@@ -53,6 +58,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 // Định nghĩa các phần tử trong DOM
 const resultIp = document.querySelector(".result-ip");
 const searchInput = document.querySelector(".search-input");
+const iconBtn = document.querySelector(".search-icon");
 
 // Xử lý sự kiện keyup khi người dùng nhập vào ô tìm kiếm
 searchInput.onkeyup = function () {
@@ -61,7 +67,7 @@ searchInput.onkeyup = function () {
 
   // Nếu input có dữ liệu
   if (input.length) {
-    result = bookTitles.filter((keyword) => {
+    result = autoInput.filter((keyword) => {
       return keyword.toLowerCase().includes(input.toLowerCase());
     });
 
@@ -75,10 +81,24 @@ searchInput.onkeyup = function () {
   }
 };
 
+searchInput.addEventListener("input", () => {
+  if (searchInput.value.trim() !== "") {
+    iconBtn.style.opacity = "0";
+  } else {
+    iconBtn.style.opacity = "1";
+  }
+});
+
 // Hàm hiển thị kết quả tìm kiếm
 function display(result) {
   const content = result.map((list) => {
-    return "<li onclick=selectInput(this)>" + list + "</li>";
+    const className = list.startsWith("Book:")
+      ? "book"
+      : list.startsWith("Author:")
+      ? "author"
+      : "";
+
+    return `<li class="${className}" onclick="selectInput(this)">${list}</li>`;
   });
 
   // Thêm danh sách vào resultIp
@@ -91,53 +111,63 @@ async function selectInput(list) {
   searchInput.value = list.innerHTML;
   resultIp.innerHTML = ""; // Xóa kết quả sau khi chọn
 
+  // alert(searchInput.value);
+
   try {
     // Gọi API để lấy danh sách sách
     const response = await fetch("/api/books");
     if (!response.ok) {
-      throw new Error("Failed to fetch books");
+      alert("Failed to fetch books");
     }
     const books = await response.json();
-
-    // Lấy giá trị So_luong_ton_it_nhat từ quy định
-    const soLuongTonItHon = await fetchSoLuongTonItHon();
-
-    // Tìm cuốn sách có tên khớp với tên được chọn
-    const selectedBook = books.find((book) => book.Ten_sach === list.innerHTML);
-
+    let selectedBook = null;
+    if (searchInput.value.includes("Book")) {
+      const bookInput = searchInput.value.replace("Book: ", "").trim();
+      selectedBook = books.filter((book) => book.Ten_sach === bookInput);
+    } else {
+      const bookInput = searchInput.value.replace("Author: ", "").trim();
+      selectedBook = books.filter((book) => book.Ten_tac_gia === bookInput);
+    }
     if (selectedBook) {
-      // Hiển thị thông tin chi tiết sách trong khối
+      // Hiển thị danh sách mặc định
       const bookContainer = document.querySelector(".book-container");
       bookContainer.innerHTML = ""; // Xóa nội dung cũ nếu có
 
-      const bookDetail = document.createElement("div");
-      bookDetail.className = "book-detail";
-      bookDetail.innerHTML = `
-        <div class="book-image-container">
-        <img 
-          src="${selectedBook.img ? selectedBook.img : `/img/${bookImage}`}" 
-          alt="${selectedBook.Ten_sach}" 
-          class="book-image">
-      </div>
-        </div>
-        <div class="book-info">
-          <h2 class="book-title">${selectedBook.Ten_sach}</h2>
-          <p class="book-category">Thể loại: ${selectedBook.The_loai}</p>
-          <p class="book-author">Tác giả: ${selectedBook.Ten_tac_gia}</p>
-          <p class="book-price">Giá: $${selectedBook.Gia}</p>
+      selectedBook.forEach((book) => {
+        const bookItem = document.createElement("div");
+        bookItem.className = "book-item";
+
+        // Sử dụng link từ cơ sở dữ liệu để hiển thị hình ảnh
+        const bookImage = book.Link; // Lấy link từ dữ liệu sách
+
+        bookItem.innerHTML = `
+          <img src="/img/${bookImage}" alt="${
+          book.Ten_sach
+        }" class="book-image">
+          <h3 class="book-title">${book.Ten_sach}</h3>
+          <p class="book-author">${book.Ten_tac_gia}</p>
+          <p class="book-category">${book.The_loai}</p>
+          <p class="book-price">$${book.Gia}</p>
           <div class="progress-container">
-            <span class="progress-text">${
-              selectedBook.So_luong
-            }/${soLuongTonItHon}</span>
+            <span class="progress-text">${book.So_luong}</span>
             <div class="progress-bar" style="width: ${
-              (selectedBook.So_luong / soLuongTonItHon) * 100
+              (book.So_luong / 100) * 100
             }%;"></div>
           </div>
-        </div>
-      `;
-      bookContainer.appendChild(bookDetail);
+        `;
+
+        // Thêm sự kiện click để hiển thị chi tiết sách khi người dùng click vào sách
+        bookItem.addEventListener("click", () => selectBook(book));
+        bookContainer.appendChild(bookItem);
+      });
     } else {
-      console.error("Không tìm thấy thông tin sách.");
+      // Hiển thị danh sách mặc định
+      const bookContainer = document.querySelector(".book-container");
+      bookContainer.innerHTML = ""; // Xóa nội dung cũ nếu có
+
+      const bookItem = document.createElement("div");
+      bookItem.className = "book-item";
+      bookItem.value = "No book searched!";
     }
   } catch (error) {
     console.error("Error fetching book details:", error);
@@ -168,6 +198,8 @@ async function showDefaultList() {
       bookItem.innerHTML = `
         <img src="/img/${bookImage}" alt="${book.Ten_sach}" class="book-image">
         <h3 class="book-title">${book.Ten_sach}</h3>
+        <p class="book-author">${book.Ten_tac_gia}</p>
+        <p class="book-category">${book.The_loai}</p>
         <p class="book-price">$${book.Gia}</p>
         <div class="progress-container">
           <span class="progress-text">${book.So_luong}</span>
@@ -186,6 +218,115 @@ async function showDefaultList() {
     console.error("Error fetching books:", error);
   }
 }
+
+const addBookBtn = document.getElementById("addBookBtn");
+addBookBtn.addEventListener("click", () => {
+  const bookContainer = document.querySelector(".book-container");
+  bookContainer.innerHTML = "";
+
+  const bookDetail = document.createElement("div");
+  bookDetail.className = "book-detail";
+  bookDetail.innerHTML = `
+    <div class="book-image-container">
+      <img src="/img/book.png" alt="Add book!" class="book-image" id="bookImage">
+      <input type="file" id="fileInput" accept="image/*" style="display: none;" />
+    </div>
+    <div class="book-info">
+      <h2 class="book-title">
+        <input type="text" class="input-title" placeholder="Enter Book Title" />
+      </h2>
+      <p class="book-author">
+        <input type="text" class="input-author" placeholder="Enter Author" />
+      </p>
+      <p class="book-category">
+        <input type="text" class="input-category" placeholder="Enter Category" />
+      </p>
+      <p class="book-price">
+        <input type="number" class="input-price" placeholder="Enter Price" />
+      </p>
+    </div>
+    <div class="book-actions">
+      <button class="save-book-btn" id="saveBookBtn">Save</button>
+      <button class="cancel-book-btn" id="cancelBookBtn">Cancel</button>
+    </div>
+`;
+  bookContainer.appendChild(bookDetail);
+
+  const bookImage = document.getElementById("bookImage");
+  const fileInput = document.getElementById("fileInput");
+  const saveBookBtn = document.getElementById("saveBookBtn");
+  const cancelBtn = document.querySelector("#cancelBookBtn");
+
+  cancelBtn.addEventListener("click", () => {
+    // Chuyển hướng về trang tìm kiếm khi nhấn nút Cancel
+    window.location.href = "/lookup";
+  });
+
+  bookImage.addEventListener("click", () => {
+    fileInput.click();
+  });
+
+  let selectedFile = null;
+  fileInput.addEventListener("change", (event) => {
+    const file = event.target.files[0];
+    if (file) {
+      selectedFile = file;
+
+      // Hiển thị ảnh vừa chọn
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        bookImage.src = e.target.result;
+      };
+      reader.readAsDataURL(file);
+    }
+  });
+
+  saveBookBtn.addEventListener("click", () => {
+    if (!selectedFile) {
+      alert("Please select an image before saving!");
+      return;
+    }
+
+    // Lấy thông tin sách từ các input fields
+    const ten_sach = document.querySelector(".input-title").value;
+    const ten_tac_gia = document.querySelector(".input-author").value;
+    const the_loai = document.querySelector(".input-category").value;
+    const gia = document.querySelector(".input-price").value;
+
+    // Lấy tên file ảnh
+    const fileName = selectedFile.name;
+
+    // Tạo FormData chứa thông tin sách và file ảnh
+    const formData = new FormData();
+    formData.append("image", selectedFile); // Thêm ảnh vào FormData
+    formData.append("ten_sach", ten_sach);
+    formData.append("ten_tac_gia", ten_tac_gia);
+    formData.append("the_loai", the_loai);
+    formData.append("nam_xuat_ban", 0);
+    formData.append("so_luong", 0);
+    formData.append("gia", gia);
+    formData.append("link", fileName); // Truyền tên file ảnh vào cơ sở dữ liệu
+
+    // Gửi dữ liệu đến server
+    fetch("/add-book", {
+      method: "POST",
+      body: formData,
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        if (data.success) {
+          // alert("Book added successfully!");
+          window.location.href = "/lookup";
+        } else {
+          alert("Failed to add book.");
+        }
+      })
+      .catch((error) => {
+        console.error("Error:", error);
+        alert("Error saving book.");
+      });
+  });
+});
 
 // Hàm khi người dùng chọn sách từ danh sách
 async function selectBook(book) {
@@ -206,8 +347,8 @@ async function selectBook(book) {
     </div>
     <div class="book-info">
       <h2 class="book-title">${book.Ten_sach}</h2>
-      <p class="book-category">Thể loại: ${book.The_loai}</p>
       <p class="book-author">Tác giả: ${book.Ten_tac_gia}</p>
+      <p class="book-category">Thể loại: ${book.The_loai}</p>
       <p class="book-price">Giá: $${book.Gia}</p>
       <div class="progress-container">
         <span class="progress-text">${book.So_luong}/${soLuongTonItHon}</span>
@@ -263,11 +404,7 @@ async function filterByCategory(category, button) {
     const books = await response.json();
 
     // Lọc sách theo thể loại
-    const filteredBooks = books.filter((book) =>
-      category === "Hot"
-        ? book.So_luong < 100 // Logic riêng cho "Hot"
-        : book.The_loai === category
-    );
+    const filteredBooks = books.filter((book) => book.The_loai === category);
 
     const bookContainer = document.querySelector(".book-container");
     bookContainer.innerHTML = ""; // Xóa nội dung cũ nếu có
@@ -281,35 +418,32 @@ async function filterByCategory(category, button) {
     }
 
     // Tạo bảng danh sách sách
-    const table = document.createElement("table");
-    table.className = "book-table";
-    table.innerHTML = `
-      <thead>
-          <tr>
-              <th>No.</th>
-              <th>Name</th>
-              <th>Category</th>
-              <th>Author</th>
-              <th>Quantity</th>
-          </tr>
-      </thead>
-      <tbody>
-          ${filteredBooks
-            .map(
-              (book, index) => `
-              <tr>
-                  <td>${index + 1}</td>
-                  <td>${book.Ten_sach}</td>
-                  <td>${book.The_loai}</td>
-                  <td>${book.Ten_tac_gia}</td>
-                  <td>${book.So_luong}</td>
-              </tr>
-          `
-            )
-            .join("")}
-      </tbody>
-    `;
-    bookContainer.appendChild(table);
+    filteredBooks.forEach((book) => {
+      const bookItem = document.createElement("div");
+      bookItem.className = "book-item";
+
+      // Sử dụng link từ cơ sở dữ liệu để hiển thị hình ảnh
+      const bookImage = book.Link; // Lấy link từ dữ liệu sách
+
+      bookItem.innerHTML = `
+        <img src="/img/${bookImage}" alt="${book.Ten_sach}" class="book-image">
+        <h3 class="book-title">${book.Ten_sach}</h3>
+        <p class="book-author">${book.Ten_tac_gia}</p>
+        <p class="book-category">${book.The_loai}</p>
+        <p class="book-price">$${book.Gia}</p>
+        <div class="progress-container">
+          <span class="progress-text">${book.So_luong}</span>
+          <div class="progress-bar" style="width: ${
+            (book.So_luong / 100) * 100
+          }%;"></div>
+        </div>
+      `;
+
+      // Thêm sự kiện click để hiển thị chi tiết sách khi người dùng click vào sách
+      bookItem.addEventListener("click", () => selectBook(book));
+
+      bookContainer.appendChild(bookItem);
+    });
 
     // Cập nhật nút active
     document.querySelectorAll(".filter-btn").forEach((btn) => {
@@ -381,6 +515,7 @@ async function selectAuthor(authorName) {
         book.Ten_sach
       }" class="book-image">
         <h3 class="book-title">${book.Ten_sach}</h3>
+        <p class="book-author">${book.Ten_tac_gia}</p>
         <p class="book-price">$${book.Gia}</p>
         <div class="progress-container">
           <span class="progress-text">${book.So_luong}/${soLuongTonItHon}</span>
@@ -462,4 +597,3 @@ menuOv.addEventListener("scroll", function () {
     menuOv.style.scrollbarWidth = "thin"; // Hiển thị lại thanh cuộn khi ngừng lướt
   }, 100); // Ẩn thanh cuộn khi lướt và hiển thị lại sau khi ngừng
 });
-

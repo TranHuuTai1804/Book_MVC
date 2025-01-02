@@ -16,20 +16,27 @@ async function fetchCustomers() {
       phone: customer.So_dien_thoai,
       address: customer.Dia_chi,
       email: customer.Email,
+      debt: customer.Tien_no,
     }));
+
+    // Đảm bảo rằng `console.log` chỉ được gọi sau khi mảng customers được cập nhật
+    console.log(customers);
   } catch (error) {
+    alert("err");
     console.error("Error fetching customers:", error);
   }
 }
 
-document.addEventListener("DOMContentLoaded", fetchCustomers);
+document.addEventListener("DOMContentLoaded", () => {
+  fetchCustomers(); // Gọi hàm khi DOM đã sẵn sàng
+});
 
 // Hiển thị gợi ý khách hàng
 function showCustomerSuggestions(inputElement) {
   const suggestionsBox = document.querySelector(
     ".autocomplete-suggestions.nameCustomer"
   );
-  if (!suggestionsBox || !inputElement) return;
+  if (!suggestionsBox || !inputElement) return 0;
 
   const searchTerm = inputElement.value.trim().toLowerCase();
 
