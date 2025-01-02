@@ -384,10 +384,10 @@ function checkCustomer() {
 
 async function submitForm() {
   const form = document.getElementById('receipt-form');
-  
+
   // Create a FormData object to easily gather form data
   const formData = new FormData(form);
-  
+
   // Optional: Validate form data here if needed
   const customer = formData.get('customer').trim();
   const address = formData.get('address').trim();
@@ -397,40 +397,64 @@ async function submitForm() {
 
   // Example validation
   if (!customer || !address || !phone || !email || !totalPaid) {
-      alert('Vui lòng điền tất cả các trường!');
-      return; // Exit function if validation fails
+    alert('Vui lòng điền tất cả các trường!');
+    return; // Exit function if validation fails
   }
 
   // Prepare the data for submission (you can convert it to JSON if needed)
   const data = {
-      customer,
-      address,
-      phone,
-      email,
-      dateReceipt: formData.get('date-receipt'), // Assuming this is set somewhere
-      totalPaid
+    customer,
+    address,
+    phone,
+    email,
+    dateReceipt: formData.get('date-receipt'), // Assuming this is set somewhere
+    totalPaid
   };
 
   try {
-      // Mock submission to a server (replace with your actual API endpoint)
-      const response = await fetch('/api/receipts/submit', {
-          method: 'POST',
-          headers: {
-              'Content-Type': 'application/json'
-          },
-          body: JSON.stringify(data)
-      });
+    // Fetch regulations
+    const regulationsResponse = await fetch('/api/getRegulations');
+    const regulations = await regulationsResponse.json();
+    const suDungQD4 = regulations[0].Su_Dung_QD4; // Regulation flag
 
-      // Check if the response is successful
-      if (response.ok) {
-          const result = await response.json();
-          alert('Thông tin đã được gửi thành công!');
-          console.log(result); // Handle the result from the server
-      } else {
-          alert('Có lỗi xảy ra. Vui lòng thử lại.');
-      }
+    // Check customer debt
+    const customerDebtResponse = await fetch(`/api/getCustomerDebt?phone=${data.phone}`);
+    const customerDebt = await customerDebtResponse.json();
+    let positiveDebt = 0;  // Initialize positiveDebt
+
+    // Check if customerDebt.debt is negative
+    if (customerDebt.debt < 0) {
+      positiveDebt = Math.abs(customerDebt.debt);
+    }
+
+    // Mock submission to a server (replace with your actual API endpoint)
+    const response = await fetch('/api/receipts/submit', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(data)
+    });
+
+    console.log('SuDungQD4:', suDungQD4);
+    console.log('PositiveDebt:', positiveDebt);
+    console.log('Total Paid:', parseFloat(data.totalPaid));
+
+    // Check totalPay against positiveDebt if Su_Dung_QD4 is true
+    if (suDungQD4 && positiveDebt > 0 && parseFloat(data.totalPaid) > positiveDebt) {
+      alert(`Tổng số tiền thanh toán không được lớn hơn nợ hiện tại (${positiveDebt} VNĐ).`);
+      return;
+    }
+
+    // Check if the response is successful
+    if (response.ok) {
+      const result = await response.json();
+      alert('Thông tin đã được gửi thành công!');
+    } else {
+      alert('Có lỗi xảy ra. Vui lòng thử lại.');
+    }
   } catch (error) {
-      console.error('Error:', error);
-      alert('Có lỗi xảy ra. Vui lòng kiểm tra kết nối mạng và thử lại.');
+    console.error('Error:', error);
+    alert('Có lỗi xảy ra. Vui lòng kiểm tra kết nối mạng và thử lại.');
   }
 }

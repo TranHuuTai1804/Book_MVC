@@ -213,15 +213,17 @@ function removeBook(button) {
   const currentBooks = JSON.parse(sessionStorage.getItem('books')) || [];
 
   // Filter out the book to be removed
-  const updatedBooks = currentBooks.filter(book => book.ID_sach !== bookId);
+  const updatedBooks = currentBooks.filter(book => String(book.ID_sach) !== bookId);
 
   // Update session storage
   sessionStorage.setItem('books', JSON.stringify(updatedBooks));
+
 }
 // app.js
 
 async function submitForm() {
   const form = document.getElementById('receipt-form');
+
 
   // Gather form data
   const booksString = sessionStorage.getItem('books'); // Get books from session storage
@@ -249,11 +251,18 @@ async function submitForm() {
       // Check customer debt
       const customerDebtResponse = await fetch(`/api/getCustomerDebt?phone=${formData.phone}`);
       const customerDebt = await customerDebtResponse.json();
-      const positiveDebt = Math.abs(customerDebt.debt);
-      console.log('customerDebt.debt', positiveDebt);
-      if (positiveDebt > maxDebt) {
-        alert(`Khách hàng nợ quá ${maxDebt} VNĐ. Không thể thực hiện giao dịch.`);
-        return;
+      // Initialize positiveDebt
+      let positiveDebt = 0;
+
+      // Check if customerDebt.debt is negative
+      if (customerDebt.debt < 0) {
+        positiveDebt = Math.abs(customerDebt.debt);
+
+        // Check if positiveDebt exceeds maxDebt
+        if (positiveDebt > maxDebt) {
+          alert(`Khách hàng nợ quá ${maxDebt} VNĐ. Không thể thực hiện giao dịch.`);
+          return;
+        }
       }
 
       // Check stock for each book
@@ -298,6 +307,8 @@ async function submitForm() {
       // Optionally reset the form
       form.reset();
       sessionStorage.removeItem('books'); // Clear session storage after submitting
+      
+      location.reload(); // This will refresh the current page
     } catch (error) {
       alert(error.message); // Show error message
     }

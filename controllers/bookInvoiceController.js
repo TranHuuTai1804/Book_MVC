@@ -11,6 +11,27 @@ class BookInvoiceController {
     res.render("book-invoice", { message });
   };
 
+  // Get regulations from the database
+  static async getRegulations(req, res) {
+    try {
+      const rows = await ReceiptModel.getRegulation();
+      res.json(rows);
+    } catch (error) {
+      res.status(500).json({ message: 'Error fetching regulations' });
+    }
+  }
+
+  // Get customer debt based on phone number
+  static async getCustomerDebt(req, res) {
+    const phone = req.query.phone;
+    try {
+      const debt = await ReceiptModel.getCustomerDebt(phone); // Use the model method
+      res.json({ debt }); // Respond with the debt amount
+    } catch (error) {
+      res.status(500).json({ message: 'Error fetching customer debt' });
+    }
+  }
+
   static async HandleSubmitReceipt(req, res) {
     const { customer, address, phone, email, dateReceipt, totalPaid } = req.body;
     // Validate input data
