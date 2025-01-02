@@ -24,87 +24,84 @@
             <h2>Receipts</h2>
         </div>
 
-        <div class="form-container">
-            <form id="receipt-form" class="two-column-form">
-                <div class="form-group">
-                    <label for="date-receipt">Ngày lập:</label>
-                    <input type="text" id="date-receipt" name="date-receipt" placeholder="Ngày lập" readonly>
-                </div>
+        <div class="container">
+            <div class="form-container">
+                <form id="receipt-form" class="two-column-form">
+                    <div class="form-group">
+                        <label for="date-receipt">Ngày lập:</label>
+                        <input type="text" id="date-receipt" name="date-receipt" placeholder="Ngày lập" readonly>
+                    </div>
+                    <div class="form-group">
+                        <label for="invoice-id">Mã hóa đơn:</label>
+                        <input type="text" id="invoice-id" name="invoice-id" placeholder="Nhập mã hóa đơn"
+                            value="<%= nextInvoiceId %>" readonly>
+                    </div>
+                    <div class="form-group">
+                        <label for="customer">Tên khách hàng:</label>
+                        <input type="text" id="customer" name="customer" placeholder="Nhập tên khách hàng" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="phone">Số điện thoại:</label>
+                        <input type="text" id="phone" name="phone" placeholder="Nhập số điện thoại"
+                            onblur="checkCustomer()" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="email">Email:</label>
+                        <input type="email" id="email" name="email" placeholder="Nhập email" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Giới tính:</label>
+                        <div>
+                            <label>
+                                <input type="radio" name="gender" value="M" required checked> Nam
+                            </label>
+                            <label>
+                                <input type="radio" name="gender" value="F"> Nữ
+                            </label>
+                        </div>
+                    </div>
+                    <div class="form-group address-group">
+                        <label for="address">Địa chỉ:</label>
+                        <input type="text" id="address" name="address" placeholder="Nhập địa chỉ" required>
+                    </div>
+                </form>
+            </div>
 
+            <div class="book-input-container">
                 <div class="form-group">
-                    <label for="invoice-id">Mã hóa đơn:</label>
-                    <input type="text" id="invoice-id" name="invoice-id" placeholder="Nhập mã hóa đơn"
-                        value="<%= nextInvoiceId %>" readonly>
+                    <label for="book-id">ID sách hoặc tên sách:</label>
+                    <input type="text" id="book-id" name="book-id" placeholder="Nhập ID hoặc tên sách" required>
+                    <button type="button" onclick="addBook()">Thêm sách vào</button>
                 </div>
+                <button type="button" onclick="submitForm()">Gửi thông tin</button>
+            </div>
 
-                <div class="form-group">
-                    <label for="customer">Tên khách hàng:</label>
-                    <input type="text" id="customer" name="customer" placeholder="Nhập tên khách hàng" required>
-                </div>
+            <table id="book-table">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Tên sách</th>
+                        <th>Tên tác giả</th>
+                        <th>Giá tiền</th>
+                        <th>Số lượng</th>
+                        <th>Tổng tiền</th>
+                        <th>Thao tác</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <!-- Book entries will be dynamically added here -->
+                </tbody>
+            </table>
 
+            <div class="total-container">
+                <h3>Số tiền khách đang nợ: <span id="amount-due">0</span> VNĐ</h3>
+                <h3>Tổng thành tiền: <span id="total-amount">0</span> VNĐ</h3>
                 <div class="form-group">
-                    <label for="phone">Số điện thoại:</label>
-                    <input type="text" id="phone" name="phone" placeholder="Nhập số điện thoại" onblur="checkCustomer()"
+                    <label id="total-pay" for="total-pay">Tổng tiền khách trả:</label>
+                    <input type="number" id="total-pay" name="total-pay" placeholder="Nhập tổng tiền khách trả"
                         required>
                 </div>
-
-                <div class="form-group">
-                    <label for="email">Email:</label>
-                    <input type="email" id="email" name="email" placeholder="Nhập email" required>
-                </div>
-
-                <div class="form-group">
-                    <label>Giới tính:</label>
-                    <div>
-                        <label>
-                            <input type="radio" name="gender" value="M" required checked> Nam
-                        </label>
-                        <label>
-                            <input type="radio" name="gender" value="F"> Nữ
-                        </label>
-                    </div>
-                </div>
-
-                <div class="form-group address-group">
-                    <label for="address">Địa chỉ:</label>
-                    <input type="text" id="address" name="address" placeholder="Nhập địa chỉ" required>
-                </div>
-
-                
-            </form>
-        </div>
-
-        <div class="book-input-container">
-            <div class="form-group">
-                <label for="book-id">ID sách hoặc tên sách:</label>
-                <input type="text" id="book-id" name="book-id" placeholder="Nhập ID hoặc tên sách" required>
-                <button type="button" onclick="addBook()">Thêm sách vào</button>
             </div>
-        </div>
-
-        <button type="button" onclick="submitForm()">Gửi thông tin</button>
-        </div>
-
-        <table id="book-table">
-            <thead>
-                <tr>
-                    <th>ID</th>
-                    <th>Tên sách</th>
-                    <th>Tên tác giả</th>
-                    <th>Giá tiền</th>
-                    <th>Số lượng</th>
-                    <th>Tổng tiền</th>
-                    <th>Thao tác</th>
-                </tr>
-            </thead>
-            <tbody>
-                <!-- Book entries will be dynamically added here -->
-            </tbody>
-        </table>
-
-        <div class="total-container">
-            <h3>Tổng thành tiền: <span id="total-amount">0</span> VNĐ</h3>
-        </div>
         </div>
 
         <button class="open-menu" onclick="toggleMenu()">></button>

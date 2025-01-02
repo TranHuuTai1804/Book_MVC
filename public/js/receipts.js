@@ -218,15 +218,11 @@ function removeBook(button) {
   // Update session storage
   sessionStorage.setItem('books', JSON.stringify(updatedBooks));
 }
+// app.js
+
 async function submitForm() {
   const form = document.getElementById('receipt-form');
-  if (form.checkValidity()) {
-    // If the form is valid, submit it
-    form.submit();
-  } else {
-    // If invalid, show validation messages
-    form.reportValidity();
-  }
+
   // Gather form data
   const booksString = sessionStorage.getItem('books'); // Get books from session storage
   const formData = {
@@ -239,30 +235,75 @@ async function submitForm() {
     address: document.getElementById('address').value,
     books: booksString ? JSON.parse(booksString) : [], // Use an empty array if null
     total: document.getElementById('total-amount').textContent,
+    totalpay: document.getElementById('total-pay').value,
   };
 
-  // Send the data to the server
-  try {
-    const response = await fetch('/api/submitInfo', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(formData),
-    });
+  // Check if the form is valid
+  if (form.checkValidity()) {
+    try {
+      // Fetch regulations
+      const regulationsResponse = await fetch('/api/getRegulations');
+      const regulations = await regulationsResponse.json();
+      const maxDebt = regulations[0].Khach_hang_no_khong_qua; // Example regulation
 
-    if (!response.ok) {
-      throw new Error('Failed to submit the form');
+      // Check customer debt
+      const customerDebtResponse = await fetch(`/api/getCustomerDebt?phone=${formData.phone}`);
+      const customerDebt = await customerDebtResponse.json();
+      const positiveDebt = Math.abs(customerDebt.debt);
+      console.log('customerDebt.debt', positiveDebt);
+      if (positiveDebt > maxDebt) {
+        alert(`Khách hàng nợ quá ${maxDebt} VNĐ. Không thể thực hiện giao dịch.`);
+        return;
+      }
+
+      // Check stock for each book
+      for (const book of formData.books) {
+        const stockResponse = await fetch(`/api/getRemainingStock?bookId=${book.ID_sach}`, {
+          method: 'GET', // Use GET method
+          headers: {
+            'Content-Type': 'application/json',
+          },
+        });
+
+        if (!stockResponse.ok) {
+          const errorData = await stockResponse.json(); // Fetch the error message
+          alert(`Error: ${errorData.message}`);
+          return;
+        }
+
+        const remainingStock = await stockResponse.json();
+
+        if (remainingStock < 20) {
+          alert(`Số lượng tồn sau khi bán của sách ${book.Ten_sach} không đủ (tối thiểu 20).`);
+          return;
+        }
+      }
+
+      // Send the data to the server if all checks pass
+      const response = await fetch('/api/submitInfo', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(formData),
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to submit the form');
+      }
+
+      const result = await response.json();
+      alert(result.message); // Show success message
+
+      // Optionally reset the form
+      form.reset();
+      sessionStorage.removeItem('books'); // Clear session storage after submitting
+    } catch (error) {
+      alert(error.message); // Show error message
     }
-
-    const result = await response.json();
-    alert(result.message); // Show success message
-
-    // Optionally reset the form
-    document.getElementById('receipt-form').reset();
-    sessionStorage.removeItem('books'); // Clear session storage after submitting
-  } catch (error) {
-    alert(error.message); // Show error message
+  } else {
+    // If invalid, show validation messages
+    form.reportValidity();
   }
 }
 
@@ -290,6 +331,25 @@ function checkCustomer() {
         document.getElementById('customer').value = data.name;
         document.getElementById('email').value = data.email;
         document.getElementById('address').value = data.address;
+
+        // Additionally, set the customer ID and debt information
+        // Retrieve total amount from the input field
+        const totalAmount = parseFloat(document.getElementById('total-amount').value) || 0; // Default to 0 if not a number
+
+        // Update the amount due based on the debt value
+        if (data.debt < 0) {
+          document.getElementById('amount-due').innerHTML = data.debt; // Show as 0 for negative debt
+          document.querySelector('.total-container h3:nth-child(1)').innerHTML = `Số tiền khách đang nợ: <span id="amount-due">${data.debt}</span> VNĐ`;
+        } else {
+          document.getElementById('amount-due').innerHTML = data.debt; // Show positive debt
+          document.querySelector('.total-container h3:nth-child(1)').innerHTML = `Số tiền khách còn dư: <span id="amount-due">${data.debt}</span> VNĐ`;
+        }
+
+        // // Calculate remaining debt
+        // const totalPaid = totalAmount + data.debt; // Adjust as needed
+        // document.getElementById('total-paid').innerHTML = totalPaid;
+      } else {
+        alert("Khách hàng không tồn tại.");
       }
     })
     .catch(error => {

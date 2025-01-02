@@ -167,15 +167,18 @@ function populateTable(data, type) {
       const tongNhap = parseInt(row.Tong_nhap) || 0;  // Chuyển thành số, nếu không hợp lệ gán 0
       const tongBan = parseInt(row.Tong_ban) || 0;  // Chuyển thành số, nếu không hợp lệ gán 0
       const tonCuoiKy = parseInt(row.Ton_cuoi_ky) || 0;  // Chuyển thành số, nếu không hợp lệ gán 0
+      const remainingI = tongNhap - tongBan;
 
-      newRow.innerHTML = `
+      if (remainingI !== 0) {
+        newRow.innerHTML = `
         <td>${idSach}</td>
         <td>${tenSach}</td>
         <td>${tonDauKy}</td>
-        <td>${tongNhap - tongBan}</td>
+        <td>${remainingI}</td>
         <td>${tonCuoiKy}</td>
       `;
-      tableBody.appendChild(newRow);
+        tableBody.appendChild(newRow);
+      }
     }
     // Nếu là bảng Debt
     else if (type === "debt") {
@@ -183,17 +186,23 @@ function populateTable(data, type) {
       const tenKH = row.Ten_khach_hang || "Không có tên";  // Nếu Ten_Khach_hang không hợp lệ, gán "Không có tên"
 
       const noDauKy = parseInt(row.Cong_no_dau_ky) || 0; // Giá trị nợ đầu kỳ
-      const Tongthuthang = parseInt(row.Tong_thu_tien); 
+      const Tongthuthang = parseInt(row.Tong_thu_tien);
       const Tonghoadonthang = parseInt(row.Tong_hoa_don);
 
-      newRow.innerHTML = `
-        <td>${idKH}</td>
-        <td>${tenKH}</td>
-        <td>${noDauKy}</td>
-        <td>${Tongthuthang - Tonghoadonthang}</td>
-        <td>${noDauKy + Tongthuthang - Tonghoadonthang}</td>
-      `;
-      tableBodyDebt.appendChild(newRow);
+      const remainingDebt = Tongthuthang - Tonghoadonthang;
+      const totalDebt = noDauKy + remainingDebt;
+
+      // Only add a new row if remainingDebt is not 0
+      if (remainingDebt !== 0) {
+        newRow.innerHTML = `
+              <td>${idKH}</td>
+              <td>${tenKH}</td>
+              <td>${noDauKy}</td>
+              <td>${remainingDebt}</td>
+              <td>${totalDebt}</td>
+          `;
+        tableBodyDebt.appendChild(newRow);
+      }
     }
 
   });
@@ -212,57 +221,72 @@ function showToast(type) {
 }
 
 function printTable() {
-    const tableBody = document.getElementById('table-body').innerHTML;
+  // Get the display status of the tables
+  const InventoryTable = document.getElementById("Inventory-table");
+  const debtTable = document.getElementById("debt-table");
 
-    // Create a new iframe
-    const iframe = document.createElement('iframe');
-    document.body.appendChild(iframe);
 
-    // Set the iframe styles to hide it
-    iframe.style.position = 'absolute';
-    iframe.style.width = '0';
-    iframe.style.height = '0';
-    iframe.style.border = 'none';
+  // Determine which table is currently displayed
+  let tableBody;
+  if (debtTable.style.display === "block") {
+    tableBody = document.getElementById('table-body-debt').innerHTML; // Modify to the correct ID for the debt table body
+    nametable = "Debt Report";
+  } else {
+    tableBody = document.getElementById('table-body').innerHTML; // Modify to the correct ID for the inventory table body
+    nametable = "Inventory Report";
+  }
 
-    // Write the content to the iframe
-    const doc = iframe.contentWindow.document;
-    doc.open();
-    doc.write(`
-        <html>
-            <head>
-                <title>Print Table</title>
-                <style>
-                    body { font-family: Arial, sans-serif; }
-                    table { width: 100%; border-collapse: collapse; }
-                    th, td { border: 1px solid #ddd; padding: 8px; text-align: left; }
-                    th { background-color: #f2f2f2; }
-                </style>
-            </head>
-            <body>
-                <h3>Date Report</h3>
-                <table>
-                    <thead>
-                        <tr>
-                            <th>No.</th>
-                            <th>Book</th>
-                            <th>First Existence</th>
-                            <th>Arise</th>
-                            <th>Last Existence</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        ${tableBody}
-                    </tbody>
-                </table>
-            </body>
-        </html>
-    `);
-    doc.close();
+  // Create a new iframe
+  const iframe = document.createElement('iframe');
+  document.body.appendChild(iframe);
 
-    // Print the iframe content
-    iframe.contentWindow.focus();
-    iframe.contentWindow.print();
+  // Set the iframe styles to hide it
+  iframe.style.position = 'absolute';
+  iframe.style.width = '0';
+  iframe.style.height = '0';
+  iframe.style.border = 'none';
 
-    // Remove the iframe after printing
-    iframe.parentNode.removeChild(iframe);
+  // Write the content to the iframe
+  const doc = iframe.contentWindow.document;
+  doc.open();
+  doc.write(`
+      <html>
+          <head>
+              <title>Print Table</title>
+              <style>
+                  body { font-family: Arial, sans-serif; }
+                  table { width: 100%; border-collapse: collapse; }
+                  th, td { border: 1px solid #ddd; padding: 8px; text-align: left; }
+                  th { background-color: #f2f2f2; }
+                  h2 { text-align: center;}
+              </style>
+          </head>
+          <body>
+          <h2>${nametable}</h2>
+              <h3>${getCurrentDate()}</h3>
+              <table>
+                  <thead>
+                      <tr>
+                          <th>No.</th>
+                          <th>Book</th>
+                          <th>First Existence</th>
+                          <th>Arise</th>
+                          <th>Last Existence</th>
+                      </tr>
+                  </thead>
+                  <tbody>
+                      ${tableBody}
+                  </tbody>
+              </table>
+          </body>
+      </html>
+  `);
+  doc.close();
+
+  // Print the iframe content
+  iframe.contentWindow.focus();
+  iframe.contentWindow.print();
+
+  // Remove the iframe after printing
+  iframe.parentNode.removeChild(iframe);
 }

@@ -1,3 +1,11 @@
+/* General Centering Styles */
+.container {
+    display: flex;
+    flex-direction: column; /* Stack children vertically */
+    align-items: center; /* Center items horizontally */
+    justify-content: center; /* Center items vertically */
+    width: 100%; /* Full width */
+}
 
 .navbar {
     width: 100%;
@@ -389,4 +397,196 @@ input {
 
 .address-group {
     grid-column: span 2; /* This will make the address input span across both columns */
+}
+
+/* Navbar Enhancements */
+.navbar {
+    font-size: 16px; /* Slightly larger font size */
+    transition: background-color 0.3s; /* Smooth transition for background color */
+}
+
+.navbar:hover {
+    background-color: rgb(60, 90, 220); /* Darker shade on hover */
+}
+
+/* Book Entry Form Enhancements */
+.book-entry-form {
+    padding: 0 60px; /* Reduced padding for a tighter look */
+}
+
+/* Form Container Enhancements */
+.form-container {
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* More pronounced shadow */
+}
+
+/* Form Group Enhancements */
+.form-group {
+    padding: 10px; /* Added padding for better spacing */
+    border-bottom: 1px solid #ddd; /* Separator between fields */
+}
+
+.form-group:last-child {
+    border-bottom: none; /* Remove border for the last field */
+}
+
+/* Input Enhancements */
+input[type="text"],
+input[type="email"],
+input[type="number"] {
+    transition: border-color 0.3s; /* Smooth transition for border color */
+}
+
+input[type="text"]:focus,
+input[type="email"]:focus,
+input[type="number"]:focus {
+    border-color: rgb(72, 109, 245); /* Change border color to match navbar */
+}
+
+/* Button Enhancements */
+.form-container button {
+    width: 100%; /* Full width for buttons */
+    font-size: 1.2rem; /* Increased font size */
+    transition: background-color 0.3s; /* Smooth transition on hover */
+}
+
+.form-container button:hover {
+    background-color: #0056b3; /* Darker shade on hover */
+}
+
+/* Overlay Menu Enhancements */
+.open-menu {
+    transition: background-color 0.3s; /* Smooth transition */
+}
+
+.open-menu:hover {
+    background-color: #ddd; /* Light grey on hover */
+}
+
+/* Toast Notifications */
+.toast, .toastError {
+    font-size: 18px; /* Slightly larger font size */
+    padding: 15px 25px; /* More padding for better appearance */
+}
+
+/* Customer Suggestions Enhancements */
+.customerSuggestions {
+    border-radius: 10px; /* Rounded corners for suggestions */
+}
+
+.customerSuggestions div:hover {
+    background-color: #e0f7fa; /* Light blue on hover */
+}
+
+/* Total Container Enhancements */
+.total-container {
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2); /* Soft shadow */
+    transition: background-color 0.3s; /* Smooth transition */
+}
+
+.total-container:hover {
+    background-color: #f1f1f1; /* Light grey on hover */
+}
+
+/* Table Enhancements */
+table th {
+    font-weight: bold; /* Bold text for headers */
+}
+
+table tbody tr:hover {
+    background-color: #f0f0f0; /* Highlight row on hover */
+}
+
+/* Book Input Container */
+.book-input-container {
+    width: 1200px; /* Fixed width */
+    margin-top: 20px; /* Add spacing above the container */
+    padding: 20px; /* Padding inside the container */
+    background-color: #F9F9F9; /* Light background color */
+    border-radius: 10px; /* Rounded corners */
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); /* Subtle shadow */
+}
+
+.book-input-container label {
+    font-weight: bold; /* Bold labels */
+    display: block; /* Block display for labels */
+    margin-bottom: 5px; /* Space below labels */
+}
+
+.book-input-container input[type="text"],
+.book-input-container input[type="number"] {
+    width: calc(100% - 130px); /* Full width minus button space */
+    padding: 10px; /* Padding for inputs */
+    border: 1px solid #ccc; /* Light border */
+    border-radius: 5px; /* Rounded corners */
+    font-size: 16px; /* Font size */
+    margin-right: 10px; /* Space to the right for button */
+}
+
+.book-input-container button {
+    padding: 10px 15px; /* Padding for buttons */
+    background-color: #007BFF; /* Button background color */
+    color: white; /* Button text color */
+    border: none; /* No border */
+    border-radius: 5px; /* Rounded corners */
+    cursor: pointer; /* Pointer cursor */
+    font-size: 16px; /* Font size */
+    transition: background-color 0.3s; /* Smooth transition */
+}
+
+.book-input-container button:hover {
+    background-color: #0056b3; /* Darker on hover */
+}
+
+/* Table Styles */
+#book-table {
+    width: 1200px; /* Fixed width */
+    border-collapse: collapse; /* Remove gaps */
+    margin-top: 20px; /* Space above the table */
+}
+
+#book-table th, #book-table td {
+    padding: 10px; /* Padding for cells */
+    text-align: left; /* Left align text */
+    border: 1px solid #ddd; /* Light border */
+}
+
+#book-table thead {
+    background-color: #B9B9B9; /* Header background color */
+    font-weight: bold; /* Bold text for headers */
+}
+
+#book-table tbody tr:nth-child(odd) {
+    background-color: #f9f9f9; /* Zebra striping for odd rows */
+}
+
+#book-table tbody tr:nth-child(even) {
+    background-color: #fff; /* White for even rows */
+}
+
+/* Total Container */
+.total-container {
+    width: 1200px; /* Fixed width */
+    margin: 20px auto; /* Center and add margin */
+    padding: 20px; /* Padding inside the container */
+    background-color: #F9F9F9; /* Light background color */
+    border-radius: 10px; /* Rounded corners */
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); /* Subtle shadow */
+}
+
+.total-container h3 {
+    margin: 10px 0; /* Margin for headings */
+}
+
+.total-container label {
+    font-weight: bold; /* Bold labels */
+    display: block; /* Block display for labels */
+    margin-bottom: 5px; /* Space below labels */
+}
+
+.total-container input[type="number"] {
+    width: 100%; /* Full width */
+    padding: 10px; /* Padding for input */
+    border: 1px solid #ccc; /* Light border */
+    border-radius: 5px; /* Rounded corners */
+    font-size: 16px; /* Font size */
 }

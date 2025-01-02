@@ -39,26 +39,95 @@ class ReceiptModel {
         return newId;
     }
 
-    static async checkCustomerPhone(phone) {
-        if (isNaN(phone)) {
-            return []; // Return an empty array instead of null
-        }
-
-        // Query to get the last ID from hoadonbansach
-        const query = `SELECT ID_khach_hang FROM Khach_hang WHERE So_dien_thoai = ?`;
-        const [rows] = await db.promise().query(query, phone);
-
-        // Check if we have a result
-        if (rows.length === 0) {
-            return []; // Return an empty array if no customer found
-        }
-
-        // Get the customer ID
-        const customerId = rows[0].ID_khach_hang; // Ensure the property matches your database schema
-
-        // Return the customer ID in an array
-        return [{ ID_khach_hang: customerId }];
+    static async getRegulation() {
+        const query = ` SELECT * FROM Quy_Dinh`;
+        const [rows] = await db.promise().query(query);
+        return rows;
     }
+
+    static async getCustomerDebt(phone) {
+        const query = `SELECT 
+    k.ID_khach_hang, 
+    k.Ten_khach_hang, 
+    k.Email, 
+    k.Dia_chi, 
+    COALESCE(pt.total_received, 0) AS total_received,
+    COALESCE(hb.total_due, 0) AS total_due,
+    COALESCE(pt.total_received, 0) - COALESCE(hb.total_due, 0) AS debt  -- Calculate debt
+FROM 
+    Khach_hang k
+LEFT JOIN 
+    (SELECT 
+         ID_Khach_hang, 
+         SUM(So_tien) AS total_received 
+     FROM 
+         Phieu_thu_tien 
+     GROUP BY 
+         ID_Khach_hang) pt ON k.ID_khach_hang = pt.ID_khach_hang
+LEFT JOIN 
+    (SELECT 
+         ID_khach_hang, 
+         SUM(Tong_tien) AS total_due 
+     FROM 
+         Hoa_don_ban_sach 
+     GROUP BY 
+         ID_khach_hang) hb ON k.ID_khach_hang = hb.ID_khach_hang
+WHERE 
+    k.So_dien_thoai = ?;`; // Adjust according to your DB schema
+        const [rows] = await db.promise().query(query, [phone]);
+        return rows[0]?.debt || 0; // Return debt amount or 0 if not found
+    }
+
+    static async getRemainingStock(bookId) {
+        // Query to get the initial stock of the book
+        const stockQuery = `SELECT So_luong FROM Sach WHERE ID_sach = ?`;
+        const [stockRows] = await db.promise().query(stockQuery, [parseInt(bookId)]);
+        // Log the result of the query
+        console.log('Stock Rows:', stockRows); // Log the rows returned from the database
+
+        const remainingStock = stockRows[0]?.So_luong;
+
+        // Log the remaining stock before returning
+        console.log('Remaining Stock:', remainingStock); // Log the remaining stock value
+        return remainingStock;
+    }
+
+    static async getCustomerByPhone(phone) {
+        const query = `
+            SELECT 
+    k.ID_khach_hang, 
+    k.Ten_khach_hang, 
+    k.Email, 
+    k.Dia_chi, 
+    COALESCE(pt.total_received, 0) AS total_received,
+    COALESCE(hb.total_due, 0) AS total_due,
+    COALESCE(pt.total_received, 0) - COALESCE(hb.total_due, 0) AS debt  -- Calculate debt
+FROM 
+    Khach_hang k
+LEFT JOIN 
+    (SELECT 
+         ID_Khach_hang, 
+         SUM(So_tien) AS total_received 
+     FROM 
+         Phieu_thu_tien 
+     GROUP BY 
+         ID_Khach_hang) pt ON k.ID_khach_hang = pt.ID_khach_hang
+LEFT JOIN 
+    (SELECT 
+         ID_khach_hang, 
+         SUM(Tong_tien) AS total_due 
+     FROM 
+         Hoa_don_ban_sach 
+     GROUP BY 
+         ID_khach_hang) hb ON k.ID_khach_hang = hb.ID_khach_hang
+WHERE 
+    k.So_dien_thoai = ?`;
+
+        const [rows] = await db.promise().query(query, [phone]);
+        return rows;
+    }
+
+
 }
 
 module.exports = ReceiptModel;
