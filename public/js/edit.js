@@ -1,3 +1,5 @@
+let regulationData = [];
+
 const fetchCustomers = async () => {
   try {
     const response = await fetch("/regulation");
@@ -41,6 +43,15 @@ const fetchCustomers = async () => {
 // Function to populate the table with customer data
 const populateTable = (regulations) => {
   const regulation = regulations[0];
+
+  regulationData = [
+    regulation.So_luong_nhap_it_nhat,
+    regulation.So_luong_ton_it_hon,
+    regulation.Khach_hang_no_khong_qua,
+    regulation.So_luong_ton_sau_khi_ban_it_nhat,
+    regulation.Su_Dung_QD4.data[0],
+  ];
+
   document.getElementById("min_input").value = regulation.So_luong_nhap_it_nhat;
   document.getElementById("low_inventory").value =
     regulation.So_luong_ton_it_hon;
@@ -60,26 +71,48 @@ document.addEventListener("DOMContentLoaded", () => {
   fetchCustomers(); // Gọi hàm khi DOM đã sẵn sàng
 });
 
-const showToast = (message) => {
-  const toast = document.createElement("div");
-  toast.className = "toast";
-  toast.textContent = message;
+document.getElementById("updateButton").addEventListener("click", function () {
+  // Tạo toast message
+  let toast = document.createElement("div");
+  toast.innerText = "Update Successfully!";
+  toast.style.position = "fixed";
+  toast.style.bottom = "120px";
+  toast.style.left = "50%";
+  toast.style.transform = "translateX(-50%)";
+  toast.style.backgroundColor = "#333";
+  toast.style.color = "#fff";
+  toast.style.padding = "20px 40px"; // Tăng padding để toast lớn hơn
+  toast.style.borderRadius = "8px"; // Làm góc tròn hơn
+  toast.style.zIndex = "9999";
+  toast.style.fontSize = "15px"; // Tăng kích thước font chữ // Làm chữ đậm
 
+  // Thêm hiệu ứng CSS cho toast
+  toast.style.opacity = "0";
+  toast.style.transition = "opacity 0.5s, transform 0.5s";
+  toast.style.transform = "translateX(-50%) translateY(20px)"; // Đặt vị trí ban đầu
+
+  // Thêm toast vào body
   document.body.appendChild(toast);
 
-  // Thêm hiệu ứng fade-in và fade-out
-  setTimeout(() => {
-    toast.style.animation = "fade-out 1s forwards";
-    toast.addEventListener("animationend", () => {
-      toast.remove(); // Xóa `toast` khỏi DOM sau khi hiệu ứng kết thúc
-    });
-  }, 3000); // Toast tồn tại trong 3 giây trước khi biến mất
-};
+  updateButton.style.opacity = 0.3;
+  updateButton.style.pointerEvents = "none";
 
-document.getElementById("updateButton").addEventListener("click", () => {
-  // event.preventDefault();
-  console.log("Clicked"); // Debug: Kiểm tra sự kiện click
-  showToast("Update Successfully!");
+  // Hiển thị toast với hiệu ứng fade-in
+  setTimeout(function () {
+    toast.style.opacity = "1";
+    toast.style.transform = "translateX(-50%) translateY(0)"; // Hiệu ứng di chuyển lên
+  }, 10);
+
+  // Tự động ẩn toast sau 3 giây với hiệu ứng fade-out
+  setTimeout(function () {
+    toast.style.opacity = "0";
+    toast.style.transform = "translateX(-50%) translateY(20px)"; // Di chuyển xuống
+  }, 2500);
+
+  // Xóa toast khỏi DOM sau khi hiệu ứng hoàn thành
+  setTimeout(function () {
+    toast.remove();
+  }, 3000);
 });
 
 const addCustomerForm = document.getElementById("addCustomerForm");
@@ -96,6 +129,57 @@ const cancelButton = document.getElementById("cancelButton");
 if (cancelButton) {
   cancelButton.addEventListener("click", hideAddCustomerForm);
 }
+
+// Lắng nghe sự kiện thay đổi trên các trường nhập liệu
+const minInputField = document.getElementById("min_input");
+const lowInventoryField = document.getElementById("low_inventory");
+const lowCustomerDebtField = document.getElementById("low_customer_debt");
+const stockAfterSaleField = document.getElementById("stock_after_sale");
+const ruleYesRadio = document.getElementById("rule_yes");
+const ruleNoRadio = document.getElementById("rule_no");
+
+const updateButton = document.getElementById("updateButton");
+
+const checkIfFieldsChanged = () => {
+  // Lấy giá trị ban đầu của các trường (có thể từ server)
+  const initialRegulation = {
+    min_input: document.getElementById("min_input").defaultValue,
+    low_inventory: document.getElementById("low_inventory").defaultValue,
+    low_customer_debt:
+      document.getElementById("low_customer_debt").defaultValue,
+    stock_after_sale: document.getElementById("stock_after_sale").defaultValue,
+    rule: document.querySelector("input[name='rule']:checked")?.value,
+  };
+
+  // Kiểm tra xem có trường nào bị thay đổi hay không
+  if (
+    minInputField.value !== initialRegulation.min_input ||
+    lowInventoryField.value !== initialRegulation.low_inventory ||
+    lowCustomerDebtField.value !== initialRegulation.low_customer_debt ||
+    stockAfterSaleField.value !== initialRegulation.stock_after_sale ||
+    (ruleYesRadio.checked && initialRegulation.rule !== "Yes") ||
+    (ruleNoRadio.checked && initialRegulation.rule !== "No")
+  ) {
+    updateButton.style.opacity = 1;
+    updateButton.style.pointerEvents = "auto"; // Nếu có thay đổi, set opacity = 1
+  } else {
+    updateButton.style.opacity = 0.3;
+    updateButton.style.pointerEvents = "none"; // Nếu không thay đổi, set opacity = 0.3
+  }
+};
+
+[
+  minInputField,
+  lowInventoryField,
+  lowCustomerDebtField,
+  stockAfterSaleField,
+  ruleYesRadio,
+  ruleNoRadio,
+].forEach((field) => {
+  field.addEventListener("change", checkIfFieldsChanged); // Khi có thay đổi, kiểm tra
+});
+
+checkIfFieldsChanged();
 
 function toggleMenu() {
   const menu = document.getElementById("hero-menu");
