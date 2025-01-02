@@ -378,6 +378,20 @@ function addRow() {
       <td class="delete-cell"><img src="img/delete.png" alt="Delete" class="delete-btn" onclick="deleteRow(this)" style="cursor: pointer; width: 20px; height: 20px" required/></td>
     `;
   tableBody.appendChild(newRow);
+
+  const quantityInput = newRow.querySelector(".book-quantity");
+
+  quantityInput.addEventListener("blur", () => {
+    const value = quantityInput.value;
+    // Kiểm tra giá trị quantity, nếu nhỏ hơn 50 thì tô đỏ
+    if (value < 50) {
+      quantityInput.style.borderColor = "#d17069";
+      quantityInput.style.backgroundColor = "#e8b5a7";
+    } else {
+      quantityInput.style.backgroundColor = "";
+      quantityInput.style.borderColor = "#000"; // Khôi phục màu nền khi giá trị >= 50
+    }
+  });
 }
 
 // Ẩn gợi ý khi người dùng nhấp bên ngoài
@@ -611,17 +625,65 @@ function selectBook(book) {
     tableBody.appendChild(newRow);
 
     const quantityInput = newRow.querySelector(".book-quantity");
-    quantityInput.addEventListener("input", () => {
+
+    quantityInput.addEventListener("blur", () => {
       const value = quantityInput.value;
       // Kiểm tra giá trị quantity, nếu nhỏ hơn 50 thì tô đỏ
       if (value < 50) {
-        quantityInput.style.backgroundColor = "red";
+        quantityInput.style.borderColor = "#d17069";
+        quantityInput.style.backgroundColor = "#e8b5a7";
       } else {
-        quantityInput.style.backgroundColor = ""; // Khôi phục màu nền khi giá trị >= 50
+        quantityInput.style.backgroundColor = "";
+        quantityInput.style.borderColor = "#000"; // Khôi phục màu nền khi giá trị >= 50
       }
     });
   }
 }
+
+const checkConditions = () => {
+  // Lấy tất cả các dòng trong bảng (trừ dòng tiêu đề)
+  const rows = document.querySelectorAll("#table-body .table-row");
+
+  let invalidRowFound = false;
+
+  rows.forEach((row) => {
+    // Lấy giá trị của cột Quantity
+    const quantityCell = row.querySelector(".book-quantity");
+    const quantityValue = parseInt(quantityCell.value, 10);
+
+    // Lấy giá trị của cột Remains
+    const remainsCell = row.querySelector(".book-remains");
+    const remainsValue = parseInt(remainsCell.value, 10);
+
+    // Kiểm tra điều kiện
+    if (quantityValue < minIn || remainsValue >= minRemain) {
+      invalidRowFound = true;
+    }
+  });
+
+  // Hiển thị thông báo hoặc vô hiệu hóa nút Done
+  const doneBtn = document.querySelector(".done-btn");
+  if (invalidRowFound) {
+    doneBtn.style.opacity = 0.3;
+    doneBtn.style.pointerEvents = "none";
+    // alert("Có dòng không hợp lệ: Quantity < 50 hoặc Remains > 100");
+  } else {
+    doneBtn.style.opacity = 1;
+    doneBtn.style.pointerEvents = "auto";
+  }
+};
+
+// Gắn sự kiện input cho tất cả các trường quantity và remains
+const attachEventListeners = () => {
+  document
+    .querySelectorAll(".book-quantity, .book-remains")
+    .forEach((input) => {
+      input.addEventListener("input", checkConditions);
+    });
+};
+
+// Gọi hàm attachEventListeners khi tải trang xong
+document.addEventListener("DOMContentLoaded", attachEventListeners);
 
 function deleteRowDetail(img) {
   const row = img.closest("tr"); // Lấy dòng chứa hình ảnh dấu "x"
