@@ -134,9 +134,9 @@ const addImportInvoice = async (newPhieuId, quantity, id_sach) => {
 };
 
 // Thêm chi tiết phiếu nhập sách
-const addImportInvoiceDetail = async (id_phieu, id_sach, quantity) => {
-  const sql = `INSERT INTO Chi_tiet_phieu_nhap_sach (ID_Phieu, ID_Sach, So_luong) VALUES (?, ?, ?)`;
-  await runQuery(sql, [id_phieu, id_sach, quantity]);
+const addImportInvoiceDetail = async (id_phieu, ID_chi_tiet , id_sach, quantity) => {
+  const sql = `INSERT INTO Chi_tiet_phieu_nhap_sach (ID_Phieu, ID_Chi_tiet, ID_Sach, So_luong) VALUES (?, ?, ?, ?)`;
+  await runQuery(sql, [id_phieu, ID_chi_tiet, id_sach, quantity]);
 };
 
 // Lấy ID phiếu nhập lớn nhất
