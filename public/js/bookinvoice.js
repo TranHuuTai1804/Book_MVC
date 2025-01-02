@@ -16,20 +16,26 @@ async function fetchCustomers() {
       phone: customer.So_dien_thoai,
       address: customer.Dia_chi,
       email: customer.Email,
+      debt: customer.Tien_no,
     }));
+
+    // Đảm bảo rằng `console.log` chỉ được gọi sau khi mảng customers được cập nhật
   } catch (error) {
+    alert("err");
     console.error("Error fetching customers:", error);
   }
 }
 
-document.addEventListener("DOMContentLoaded", fetchCustomers);
+document.addEventListener("DOMContentLoaded", () => {
+  fetchCustomers(); // Gọi hàm khi DOM đã sẵn sàng
+});
 
 // Hiển thị gợi ý khách hàng
 function showCustomerSuggestions(inputElement) {
   const suggestionsBox = document.querySelector(
     ".autocomplete-suggestions.nameCustomer"
   );
-  if (!suggestionsBox || !inputElement) return;
+  if (!suggestionsBox || !inputElement) return 0;
 
   const searchTerm = inputElement.value.trim().toLowerCase();
 
@@ -82,17 +88,6 @@ function selectCustomer(customerNameEncoded) {
     suggestionsBox.style.display = "none";
   }
 }
-
-// Ẩn gợi ý khi click bên ngoài
-document.addEventListener("click", function (e) {
-  const customerContainer = document.querySelector(".customer");
-  const suggestionsBox = document.querySelector(
-    ".autocomplete-suggestions.nameCustomer"
-  );
-  if (!customerContainer.contains(e.target) && suggestionsBox) {
-    suggestionsBox.style.display = "none";
-  }
-});
 
 let booksList = [];
 
@@ -354,4 +349,88 @@ function showToast(type) {
 
   toast.classList.add("show");
   setTimeout(() => toast.classList.remove("show"), 3000);
+}
+
+function checkCustomer() {
+  const phoneInput = document.getElementById('phone').value;
+
+  // Check if the phone number is 10 digits long
+  if (phoneInput.length !== 10 || isNaN(phoneInput)) {
+    alert("Vui lòng nhập số điện thoại gồm 10 chữ số.");
+    return;
+  }
+
+  // Call the server to check if the customer exists
+  fetch('/check-customer', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify({ phone: phoneInput })
+  })
+    .then(response => response.json())
+    .then(data => {
+      if (data.exists) {
+        // Populate the form fields with the customer data
+        document.getElementById('customer').value = data.name;
+        document.getElementById('email').value = data.email;
+        document.getElementById('address').value = data.address;
+      }
+    })
+    .catch(error => {
+      console.error('Error:', error);
+    });
+}
+
+async function submitForm() {
+  const form = document.getElementById('receipt-form');
+  
+  // Create a FormData object to easily gather form data
+  const formData = new FormData(form);
+  
+  // Optional: Validate form data here if needed
+  const customer = formData.get('customer').trim();
+  const address = formData.get('address').trim();
+  const phone = formData.get('phone').trim();
+  const email = formData.get('email').trim();
+  const totalPaid = formData.get('total-paid').trim();
+
+  // Example validation
+  if (!customer || !address || !phone || !email || !totalPaid) {
+      alert('Vui lòng điền tất cả các trường!');
+      return; // Exit function if validation fails
+  }
+
+  // Prepare the data for submission (you can convert it to JSON if needed)
+  const data = {
+      customer,
+      address,
+      phone,
+      email,
+      dateReceipt: formData.get('date-receipt'), // Assuming this is set somewhere
+      totalPaid
+  };
+
+  try {
+      // Mock submission to a server (replace with your actual API endpoint)
+      const response = await fetch('/api/receipts/submit', {
+          method: 'POST',
+          headers: {
+              'Content-Type': 'application/json'
+          },
+          body: JSON.stringify(data)
+      });
+
+      // Check if the response is successful
+      if (response.ok) {
+          const result = await response.json();
+          alert('Thông tin đã được gửi thành công!');
+          console.log(result); // Handle the result from the server
+      } else {
+          alert('Có lỗi xảy ra. Vui lòng thử lại.');
+      }
+  } catch (error) {
+      console.error('Error:', error);
+      alert('Có lỗi xảy ra. Vui lòng kiểm tra kết nối mạng và thử lại.');
+  }
 }

@@ -29,33 +29,55 @@
           type="text"
           id="search-input"
           class="search-input"
-          placeholder="Search books..."
+          placeholder="Search books, authors"
         />
+        <img src="img/find.png" alt="Search Icon" class="search-icon" />
         <div class="result-ip"></div>
       </div>
 
       <div class="search-btns">
-        <!-- Thể loại -->
         <div class="dropdown">
-          <button class="filter-btn" onclick="toggleCategoryDropdown()">
-            Thể loại
+          <button class="filter-btn" onclick="toggleDropdown()">
+            Category
           </button>
           <div class="dropdown-content" id="categoryDropdown">
-            <!-- Các thể loại sẽ được hiển thị ở đây -->
+            <button
+              class="filter-btn"
+              onclick="filterByCategory('Văn học thiếu nhi', this)"
+            >
+              Văn học thiếu nhi
+            </button>
+            <button
+              class="filter-btn"
+              onclick="filterByCategory('Tiểu thuyết', this)"
+            >
+              Tiểu thuyết
+            </button>
+            <button
+              class="filter-btn"
+              onclick="filterByCategory('Thơ ca', this)"
+            >
+              Thơ ca
+            </button>
+            <button
+              class="filter-btn"
+              onclick="filterByCategory('Hồi ký', this)"
+            >
+              Hồi ký
+            </button>
           </div>
         </div>
-
-        <!-- Tác giả -->
-        <div class="dropdown">
-          <button class="filter-btn" onclick="toggleAuthorDropdown()">
-            Tác giả
-          </button>
-          <div class="dropdown-content" id="authorDropdown">
-            <!-- Các tác giả sẽ được hiển thị ở đây -->
-          </div>
-        </div>
+        <!-- Nút Add Book -->
         <button id="allBtn" class="filter-btn" onclick="showDefaultList(this)">
-          Tất cả
+          All
+        </button>
+        <button
+          id="addBookBtn"
+          class="filter-btn add-book-btn"
+          onclick="addBook()"
+        >
+          <img src="img/plus.png" alt="Add Book Icon" class="btn-icon" />
+          Add Book
         </button>
       </div>
     </div>
@@ -71,7 +93,7 @@
 
     <!-- Menu Section -->
     <div id="hero-menu" class="menu-ovl" style="display: none">
-      <button><a href="/bookempty">Book Emtry Form</a></button>
+      <button><a href="/bookempty">Book Entry Form</a></button>
       <button><a href="/bookinvoice">Book Invoice</a></button>
       <button><a href="lookup">Book Lookup</a></button>
       <button><a href="/receipts">Receipt</a></button>

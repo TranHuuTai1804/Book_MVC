@@ -20,58 +20,39 @@
     </div>
 
     <!-- Tiêu đề Date -->
-    <div class="customer-section">
-        <div class="customer">
-            <h3>Customer:</h3>
-            <input type="text" id="customer-name" placeholder="Customer Name" oninput="showCustomerSuggestions(this)">
-            <div class="autocomplete-suggestions nameCustomer" style="display: none;"></div>
-          </div>
-          
-    
-        <div class="date">
-            <h3>Date:</h3>
-            <div class="date-picker">
-                <input type="text" id="date-receipt" placeholder="Select Date" readonly>
-                <img src="/img/calendar.svg" alt="Calendar Icon" id="calendar-icon">
-            </div>
+    <div class="container">
+        <div class="form-container">
+            <form id="receipt-form" class="two-column-form">
+                <div class="form-group">
+                    <label for="customer">Họ tên khách hàng:</label>
+                    <input type="text" id="customer" name="customer" placeholder="Nhập họ tên khách hàng" required>
+                </div>
+                <div class="form-group address-group">
+                    <label for="address">Địa chỉ:</label>
+                    <input type="text" id="address" name="address" placeholder="Nhập địa chỉ" required>
+                </div>
+                <div class="form-group">
+                    <label for="phone">Số điện thoại:</label>
+                    <input type="text" id="phone" name="phone" placeholder="Nhập số điện thoại" onblur="checkCustomer()" required>
+                </div>
+                <div class="form-group">
+                    <label for="email">Email:</label>
+                    <input type="email" id="email" name="email" placeholder="Nhập email" required>
+                </div>
+                <div class="form-group">
+                    <label for="date-receipt">Ngày thu tiền:</label>
+                    <input type="text" id="date-receipt" name="date-receipt" placeholder="Ngày thu tiền" readonly>
+                </div>
+                <div class="form-group">
+                    <label for="total-paid">Tổng tiền thu:</label>
+                    <input type="number" id="total-paid" name="total-paid" placeholder="Nhập tổng tiền thu" required>
+                </div>
+                <div class="form-group-full-width">
+                    <button type="button" onclick="submitForm()">Gửi thông tin</button>
+                </div>
+            </form>
         </div>
     </div>
-
-    <!-- Bảng -->
-    <div class="date-section">
-    <form method="post" action="">
-            <table class="table-container">
-                <thead>
-                    <tr>
-                        <th>No.</th>
-                        <th>Book</th>
-                        <th>Category</th>
-                        <th>Quantity</th>
-                        <th>Price</th>
-                    </tr>
-                </thead>
-                <tbody id="table-body">
-                    <!-- Dòng 1, nhập liệu -->
-                    <tr>
-                        <td><input type="text" name="id[]" placeholder="ID" class="book-no" required></td>
-                        <td class="nameBook">
-                            <input type="text" name="name[]" placeholder="Book name" class="book-name" oninput="showSuggestions(this)" required>
-                            <div class="autocomplete-suggestions" style="display: none;"></div>
-                        </td>
-                        <td><input type="text" name="category[]" placeholder="Category" class="book-category" required></td>
-                        <td>
-                            <input type="number" name="quantity[]" placeholder="Quantity" class="book-quantity" min="1" required data-regulation oninput="calculatePrice(this)">
-                        </td>
-                        <td><input type="number" name="price[]" placeholder="Price" class="book-price" step="0.01" min="0" required></td>
-                    </tr>
-                </tbody>
-            </table>
-            <button type="button" class="add-row-btn" onclick="addRow()">+</button>
-            <button type="button" class="add-row-btn delete-row" onclick="deleteRow()">-</button>
-            <button type="submit" class="done-btn">Done</button>
-        </form>
-    </div>
-
     <button class="open-menu" onclick="toggleMenu()">></button>
 
     <!-- Overlay -->
@@ -79,7 +60,7 @@
 
     <!-- Menu Section -->
     <div id="hero-menu" class="menu-ovl" style="display: none;">
-        <button><a href="/bookempty">Book Emtry Form</a></button>
+        <button><a href="/bookempty">Book Entry Form</a></button>
         <button><a href="/bookinvoice">Book Invoice</a></button>
         <button><a href="lookup">Book Lookup</a></button>
         <button><a href="/receipts">Receipt</a></button>

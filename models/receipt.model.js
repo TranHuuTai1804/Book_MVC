@@ -82,13 +82,9 @@ WHERE
         // Query to get the initial stock of the book
         const stockQuery = `SELECT So_luong FROM Sach WHERE ID_sach = ?`;
         const [stockRows] = await db.promise().query(stockQuery, [parseInt(bookId)]);
-        // Log the result of the query
-        console.log('Stock Rows:', stockRows); // Log the rows returned from the database
 
         const remainingStock = stockRows[0]?.So_luong;
 
-        // Log the remaining stock before returning
-        console.log('Remaining Stock:', remainingStock); // Log the remaining stock value
         return remainingStock;
     }
 

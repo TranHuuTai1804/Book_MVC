@@ -415,3 +415,112 @@ input[type="text"], input[type="number"] {
 .toastError {
     background-color: #e33a3a; 
 }
+
+/* Form Container */
+.form-container {
+    width: 600px; /* Fixed width */
+    margin: 20px auto; /* Center the form */
+    padding: 20px; /* Padding inside the container */
+    background-color: #F9F9F9; /* Light background color */
+    border-radius: 10px; /* Rounded corners */
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); /* Subtle shadow */
+}
+
+/* Two-Column Form */
+.two-column-form {
+    display: flex; /* Use flexbox for layout */
+    flex-wrap: wrap; /* Allow wrapping of items */
+}
+
+.form-group {
+    margin-bottom: 10px;
+    width: 48%; /* Each form group takes up almost half the width */
+    margin-right: 4%; /* Space between columns */
+    box-sizing: border-box; /* Include padding and border in width */
+}
+
+.form-group:nth-child(2n) {
+    margin-right: 0; /* Remove margin for every second item */
+}
+
+/* Input styles */
+input[type="text"],
+input[type="email"],
+input[type="number"] {
+    width: 100%; /* Full width of the container */
+    padding: 10px; /* Padding for inputs */
+    border: 1px solid #ccc; /* Light border */
+    border-radius: 5px; /* Rounded corners */
+    font-size: 17px; /* Font size */
+}
+
+
+/* Label styles */
+label {
+    font-weight: bold; /* Bold labels */
+    display: block; /* Block display for labels */
+    margin-bottom: 5px; /* Space below labels */
+}
+
+/* Button Styles */
+.form-group button {
+    column-span: 2;
+    margin-top: 23px;
+    width: 100%; /* Full width for the button */
+    padding: 10px; /* Padding for button */
+    background-color: #007BFF; /* Button background color */
+    color: white; /* Button text color */
+    border: none; /* No border */
+    border-radius: 5px; /* Rounded corners */
+    cursor: pointer; /* Pointer cursor */
+    font-size: 17px; /* Font size */
+    transition: background-color 0.3s; /* Smooth transition */
+}
+
+.form-group button:hover {
+    background-color: #0056b3; /* Darker on hover */
+}
+
+
+/* Responsive adjustments */
+@media (max-width: 600px) {
+    .form-group {
+        width: 100%; /* Full width on small screens */
+        margin-right: 0; /* Remove right margin */
+    }
+}
+
+/* Form Group */
+.form-group {
+    width: 48%; /* Each form group takes up almost half the width */
+    margin-right: 4%; /* Space between columns */
+    box-sizing: border-box; /* Include padding and border in width */
+}
+
+/* Remove margin for the last item in each row */
+.form-group:nth-child(2n) {
+    margin-right: 0; /* Remove margin for every second item */
+}
+
+/* Button Group */
+.form-group-full-width {
+    width: 100%; /* Full width for the button */
+    margin-top: 20px; /* Spacing above the button */
+}
+
+/* Button Styles */
+.form-group-full-width button {
+    width: 100%; /* Full width for the button */
+    padding: 10px; /* Padding for button */
+    background-color: #007BFF; /* Button background color */
+    color: white; /* Button text color */
+    border: none; /* No border */
+    border-radius: 5px; /* Rounded corners */
+    cursor: pointer; /* Pointer cursor */
+    font-size: 17px; /* Font size */
+    transition: background-color 0.3s; /* Smooth transition */
+}
+
+.form-group-full-width button:hover {
+    background-color: #0056b3; /* Darker on hover */
+}

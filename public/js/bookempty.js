@@ -71,6 +71,60 @@ async function fetchSoLuongTonItHon() {
   }
 }
 
+let minRemain = 0;
+let minIn = 0;
+let useRules = false;
+
+const fetchCustomers = async () => {
+  try {
+    const response = await fetch("/regulation");
+
+    // Kiểm tra mã trạng thái HTTP (200-299)
+    if (!response.ok) {
+      const errorMessage = `Lỗi HTTP! Mã lỗi: ${response.status}`;
+
+      // Kiểm tra xem có thông báo lỗi từ phía backend không
+      const errorResponse = await response.text(); // Lấy toàn bộ nội dung phản hồi lỗi
+      throw new Error(`${errorMessage}. Nội dung lỗi: ${errorResponse}`);
+    }
+
+    // Kiểm tra xem phản hồi có phải là JSON không
+    const contentType = response.headers.get("Content-Type");
+    if (!contentType || !contentType.includes("application/json")) {
+      throw new Error("Dự kiến là JSON, nhưng nhận được loại khác");
+    }
+    let listOfRegulations = [];
+    // Phân tích phản hồi dưới dạng JSON
+    const regulations = await response.json();
+    regulations.forEach((regulation, index) => {
+      listOfRegulations.push(regulation.So_luong_nhap_it_nhat);
+      listOfRegulations.push(regulation.So_luong_ton_it_hon);
+      listOfRegulations.push(regulation.Su_Dung_QD4.data[0]);
+    });
+    minIn = listOfRegulations[0];
+    minRemain = listOfRegulations[1];
+    useRules = listOfRegulations[2];
+  } catch (error) {
+    // Log lỗi chi tiết hơn, bao gồm thông tin về lỗi HTTP, lỗi JSON và lỗi từ backend nếu có
+    console.error("Lỗi khi lấy dữ liệu khách hàng:", error.message);
+
+    // Hiển thị thông báo lỗi cho người dùng (nếu cần)
+    alert(`Có lỗi xảy ra khi lấy dữ liệu: ${error.message}`);
+  }
+};
+
+const updateData = async () => {
+  await fetchCustomers();
+  if (useRules) {
+    document.getElementById("min-import").textContent = minIn;
+    document.getElementById("min-stock").textContent = minRemain;
+  } else {
+    document.getElementById("min-import").textContent = "None";
+    document.getElementById("min-stock").textContent = "None";
+  }
+};
+
+updateData();
 let minInput = [];
 let isMinEnabled = false;
 
@@ -175,6 +229,7 @@ async function fetchBookTitles() {
       The_loai: book.The_loai,
       Ten_tac_gia: book.Ten_tac_gia,
       Gia: book.Gia,
+      So_luong: book.So_luong,
     }));
 
     // console.log("Danh sách sách hiện tại:", booksList);
@@ -244,19 +299,54 @@ function selectSuggestion(bookName, suggestionElement) {
     const categoryInput = row.querySelector('input[name="category[]"]');
     const authorInput = row.querySelector('input[name="author[]"]');
     const priceInput = row.querySelector('input[name="price[]"]');
+    const remainsInput = row.querySelector('input[name="remains[]"]');
+    const statusInput = row.querySelector('input[name="status[]"]');
 
     if (categoryInput) categoryInput.value = selectedBook.The_loai || "";
     if (authorInput) authorInput.value = selectedBook.Ten_tac_gia || "";
     if (priceInput) priceInput.value = selectedBook.Gia || "";
+    if (remainsInput) remainsInput.value = selectedBook.So_luong || "";
+    // Gắn sự kiện blur cho tất cả các trường quantity
+    const quantityInputs = document.querySelectorAll(
+      'input[name="quantity[]"]'
+    );
+    quantityInputs.forEach((input) => {
+      input.addEventListener("blur", function () {
+        checkQuantityInput(input);
+      });
+    });
+    if (remainsInput.value >= minRemain) {
+      remainsInput.style.borderColor = "#d17069";
+      remainsInput.style.backgroundColor = "#e8b5a7";
+    }
+
+    // Thêm ảnh bìa vào ô tương ứng
+    if (remainsInput.value > 0) statusInput.value = "In stock";
+    else statusInput.value = "Out of stock";
   } catch (error) {
     console.error("Lỗi khi chọn gợi ý:", error);
+  }
+}
+
+const quantityInputs = document.querySelectorAll('input[name="quantity[]"]');
+quantityInputs.forEach((input) => {
+  input.addEventListener("blur", function () {
+    checkQuantityInput(input);
+  });
+});
+
+function checkQuantityInput(input) {
+  if (input.value <= minIn) {
+    input.style.borderColor = "red";
+    input.style.backgroundColor = "#e8b5a7"; // Tô viền đỏ nếu chưa điền hoặc giá trị không hợp lệ
+  } else {
+    input.style.borderColor = ""; // Xóa viền đỏ nếu giá trị hợp lệ
   }
 }
 
 //Xoá hàng
 function deleteRow() {
   const tableBody = document.getElementById("table-body");
-
   // Kiểm tra nếu bảng có ít nhất một hàng
   if (tableBody.children.length > 0) {
     // Xoá hàng cuối cùng
@@ -273,6 +363,7 @@ function addRow() {
   const rowIndex = tableBody.children.length;
 
   const newRow = document.createElement("tr");
+  newRow.classList.add("table-row");
   newRow.innerHTML = `
       <td class="nameBook">
           <input type="text" name="name[]" placeholder="Book name" class="book-name" data-row-index="${rowIndex}" oninput="showSuggestions(this)" required>
@@ -282,6 +373,9 @@ function addRow() {
       <td><input type="text" name="author[]" placeholder="Author" class="book-author" data-row-index="${rowIndex}" required></td>
       <td><input type="number" name="quantity[]" placeholder="Quantity" class="book-quantity" min="1" data-row-index="${rowIndex}" required></td>
       <td><input type="number" name="price[]" placeholder="Price" class="book-price" step="0.01" min="0" data-row-index="${rowIndex}" required></td>
+      <td><input type="number" name="remains[]" placeholder="Remains" class="book-remains" data-row-index="${rowIndex}" required></td>
+      <td><input type="text" name="status[]" placeholder="Status" placeholder="Status" class="book-status" data-row-index="${rowIndex}" required></td>
+      <td class="delete-cell"><img src="img/delete.png" alt="Delete" class="delete-btn" onclick="deleteRow(this)" style="cursor: pointer; width: 20px; height: 20px" required/></td>
     `;
   tableBody.appendChild(newRow);
 }
@@ -368,7 +462,6 @@ async function submitBooks() {
       author: cells[3].value.trim(),
       quantity: parseInt(cells[4].value.trim()) || 0,
       price: parseFloat(cells[5].value.trim()) || 0,
-      
     };
 
     // Kiểm tra nếu bất kỳ trường nào bị bỏ trống
@@ -397,6 +490,8 @@ async function submitBooks() {
           <td><input type="text" name="author[]" placeholder="Author" class="book-author" required></td>
           <td><input type="number" name="quantity[]" placeholder="Quantity" class="book-quantity" min="1" required></td>
           <td><input type="number" name="price[]" placeholder="Price" class="book-price" step="0.01" min="0" required></td>
+          <td><input type="number" name="remains[]" placeholder="Remains" class="book-remains" required></td>
+          <td><input type="text" name="status[]" placeholder="Status" class="book-status" required></td>
         </tr>
       `;
   } catch (error) {
@@ -404,3 +499,136 @@ async function submitBooks() {
     console.error("Error in submitBooks:", error);
   }
 }
+
+// Hàm hiển thị danh sách mặc định (tất cả các loại sách)
+async function showDefaultList() {
+  try {
+    // Gọi API để lấy tất cả sách
+    const response = await fetch("/api/books");
+    if (!response.ok) {
+      throw new Error("Failed to fetch books");
+    }
+    const books = await response.json();
+
+    const filteredBooks = books.filter((book) => book.So_luong < minRemain);
+
+    // Hiển thị danh sách mặc định
+    const bookContainer = document.querySelector(".book-container");
+    bookContainer.innerHTML = ""; // Xóa nội dung cũ nếu có
+
+    filteredBooks.forEach((book) => {
+      const bookItem = document.createElement("div");
+      bookItem.className = "book-item";
+
+      // Sử dụng link từ cơ sở dữ liệu để hiển thị hình ảnh
+      const bookImage = book.Link; // Lấy link từ dữ liệu sách
+
+      bookItem.innerHTML = `
+        <img src="/img/${bookImage}" alt="${book.Ten_sach}" class="book-image">
+        <h3 class="book-title-img">${book.Ten_sach}</h3>
+        <p class="book-author-img">${book.Ten_tac_gia}</p>
+        <p class="book-category-img">${book.The_loai}</p>
+        <p class="book-price-img">$${book.Gia}</p>
+        <div class="progress-container">
+          <span class="progress-text">${book.So_luong}</span>
+          <div class="progress-bar" style="width: ${
+            (book.So_luong / 100) * 100
+          }%;"></div>
+        </div>
+      `;
+
+      // Thêm sự kiện click để hiển thị chi tiết sách khi người dùng click vào sách
+      bookItem.addEventListener("click", () => {
+        selectBook(book);
+        // Xóa sách đã chọn khỏi danh sách hiển thị
+        bookItem.remove();
+      });
+
+      bookContainer.appendChild(bookItem);
+    });
+  } catch (error) {
+    console.error("Error fetching books:", error);
+  }
+}
+
+function selectBook(book) {
+  // alert("here");
+  const tableBody = document.getElementById("table-body");
+  let emptyRow = null;
+  for (let row of tableBody.rows) {
+    const inputs = row.querySelectorAll("input");
+    if (
+      Array.from(inputs).some((input, index) => {
+        // Bỏ qua ô "quantity" (thường là ô thứ 3 trong bảng)
+        return index !== 3 && input.value === "";
+      })
+    ) {
+      emptyRow = row;
+      break;
+    }
+  }
+
+  if (emptyRow) {
+    const inputs = emptyRow.querySelectorAll("input");
+    inputs[0].value = book.Ten_sach; // Tên sách
+    inputs[1].value = book.The_loai; // Thể loại
+    inputs[2].value = book.Ten_tac_gia; // Tác giả // Số lượng, có thể để trống để người dùng nhập
+    inputs[4].value = book.Gia; // Giá
+    inputs[5].value = book.So_luong; // Số lượng còn lại
+    inputs[6].value = book.So_luong > 0 ? "In stock" : "Out of stock"; // Trạng thái
+  } else {
+    // Tạo một hàng mới trong bảng
+    const newRow = document.createElement("tr");
+    const status = book.So_luong > 0 ? "In stock" : "Out of stock";
+
+    // Thêm các ô vào hàng
+    newRow.innerHTML = `
+    <td class="nameBook">
+      <input type="text" name="name[]" value="${book.Ten_sach}" class="book-name" required />
+    </td>
+    <td>
+      <input type="text" name="category[]" value="${book.The_loai}" class="book-category" required />
+    </td>
+    <td>
+      <input type="text" name="author[]" value="${book.Ten_tac_gia}" class="book-author" required />
+    </td>
+    <td>
+      <input type="number" name="quantity[]" placeholder="Quantity" class="book-quantity" min="1" required />
+    </td>
+    <td>
+      <input type="number" name="price[]" value="${book.Gia}" class="book-price" step="0.01" min="0" required />
+    </td>
+    <td>
+      <input type="number" name="remains[]" value="${book.So_luong}" class="book-remains" />
+    </td>
+    <td>
+      <input type="text" name="status[]" value="${status}" class="book-status" />
+    </td>
+    <td class="delete-cell"> <img src="img/delete.png" alt="Delete" class="delete-btn" onclick="deleteRow(this)" style="cursor: pointer; width: 20px; height: 20px" required/></td>
+  `;
+
+    // Thêm hàng mới vào bảng
+    tableBody.appendChild(newRow);
+
+    const quantityInput = newRow.querySelector(".book-quantity");
+    quantityInput.addEventListener("input", () => {
+      const value = quantityInput.value;
+      // Kiểm tra giá trị quantity, nếu nhỏ hơn 50 thì tô đỏ
+      if (value < 50) {
+        quantityInput.style.backgroundColor = "red";
+      } else {
+        quantityInput.style.backgroundColor = ""; // Khôi phục màu nền khi giá trị >= 50
+      }
+    });
+  }
+}
+
+function deleteRowDetail(img) {
+  const row = img.closest("tr"); // Lấy dòng chứa hình ảnh dấu "x"
+  row.remove(); // Xóa dòng
+}
+
+document.addEventListener("DOMContentLoaded", async () => {
+  await fetchBookTitles(); // Đảm bảo dữ liệu được tải trước khi cho phép tìm kiếm
+  await showDefaultList(); // Hiển thị tất cả các sách ngay khi trang tải
+});

@@ -36,6 +36,7 @@ const updateRegulation = async (
     stock_after_sale,
     ruleBit,
   ]);
+  console.log(result);
   return result; // Trả về kết quả sau khi cập nhật
 };
 

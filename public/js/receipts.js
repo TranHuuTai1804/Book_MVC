@@ -332,10 +332,6 @@ function checkCustomer() {
         document.getElementById('email').value = data.email;
         document.getElementById('address').value = data.address;
 
-        // Additionally, set the customer ID and debt information
-        // Retrieve total amount from the input field
-        const totalAmount = parseFloat(document.getElementById('total-amount').value) || 0; // Default to 0 if not a number
-
         // Update the amount due based on the debt value
         if (data.debt < 0) {
           document.getElementById('amount-due').innerHTML = data.debt; // Show as 0 for negative debt
@@ -344,12 +340,6 @@ function checkCustomer() {
           document.getElementById('amount-due').innerHTML = data.debt; // Show positive debt
           document.querySelector('.total-container h3:nth-child(1)').innerHTML = `Số tiền khách còn dư: <span id="amount-due">${data.debt}</span> VNĐ`;
         }
-
-        // // Calculate remaining debt
-        // const totalPaid = totalAmount + data.debt; // Adjust as needed
-        // document.getElementById('total-paid').innerHTML = totalPaid;
-      } else {
-        alert("Khách hàng không tồn tại.");
       }
     })
     .catch(error => {

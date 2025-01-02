@@ -39,7 +39,7 @@ app.use(bookEmptyRoutes);
 const apiRoutes = require("./routes/api");
 app.use(apiRoutes);
 
-const bookInvoiceRoutes = require("./routes/bookinvoice");
+const bookInvoiceRoutes = require("./routes/bookinvoice.routes");
 app.use(bookInvoiceRoutes);
 
 const lookUpRoutes = require("./routes/booklookup");

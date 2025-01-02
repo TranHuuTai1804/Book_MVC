@@ -1,404 +1,378 @@
-
 .navbar {
-    width: 100%;
-    height: 60px; 
-    padding: 20px 6%;
-    display: flex;
-    justify-content: space-between;
-    position: fixed; 
-    top: 0; 
-    z-index: 1000; 
-    font-size: 14px;
-    color: white;
-    background-color: rgb(72, 109, 245);
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  width: 100%;
+  height: 60px;
+  padding: 20px 6%;
+  display: flex;
+  justify-content: space-between;
+  position: fixed;
+  top: 0;
+  z-index: 1000;
+  font-size: 14px;
+  color: white;
+  background-color: rgb(72, 109, 245);
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
 }
 
 .navbar-left {
-    display: flex;
-    align-items: center;
-    gap: 100px;
+  display: flex;
+  align-items: center;
+  gap: 100px;
 }
 
 .navbar-left img {
-    width: 210px;
+  width: 210px;
 }
 
 .navbar-left ul {
-    display: flex;
-    list-style: none;
-    gap: 40px;
+  display: flex;
+  list-style: none;
+  gap: 40px;
 }
 
-.navbar-left ul li a{
-    font-size: 2rem;
-    font-weight: 500;
-    color: #fff;
+.navbar-left ul li a {
+  font-size: 2rem;
+  font-weight: 500;
+  color: #fff;
 }
 
 .navbar-left ul li a:hover {
-    text-decoration: underline;
+  text-decoration: underline;
 }
 
 .navbar-right {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 40px;
 }
 
-
-.navbar-right button{ 
-    width: 90px;
-    height: 40px;
-    background-color: white;
-    border-radius: 20px;
-    border: none;
-    outline: none;
+.navbar-right button {
+  width: 90px;
+  height: 40px;
+  background-color: white;
+  border-radius: 20px;
+  border: none;
+  outline: none;
 }
 
-.navbar-right button:hover  {
-    opacity: 0.8;
+.navbar-right button:hover {
+  opacity: 0.8;
 }
 
 .logout a {
-    padding: 10px 12px;
+  padding: 10px 12px;
 }
 
-.logout:hover a{
-    color: black;
+.logout:hover a {
+  color: black;
 }
 
 .navbar-right button a {
-    font-size: 1.4rem;
-    font-weight: 500;
-    color: #000;
+  font-size: 1.4rem;
+  font-weight: 500;
+  color: #000;
 }
 
-/* home empty */ 
+/* home empty */
 .book-entry-form {
-    background-color: #72C2AE;
-    color: white;
-    font-size: 2rem;
-    font-weight: 500;
-    height: 60px; 
-    display: flex;
-    align-items: center;
-    padding: 0 90px;
-    margin-top: 60px; 
+  background-color: #72c2ae;
+  color: white;
+  font-size: 2rem;
+  font-weight: 500;
+  height: 60px;
+  display: flex;
+  align-items: center;
+  padding: 0 90px;
+  margin-top: 60px;
 }
 
 .book-entry-form h2 {
-    margin: 0; 
-}
-
-/* Date Table */
-.date-section {
-    margin-top: 26px;
-    margin-bottom: 26px;
-    padding: 0 6%;
-    font-weight: 700;
-}
-
-.table-container {
-    width: 100%;
-    overflow-x: auto;
-    padding: 0 6%;
-}
-
-table {
-    width: 100%;
-    border-collapse: collapse;
-}
-
-table th, table td {
-    padding: 10px;
-    text-align: left;
-    border: 1px solid #ddd;
-}
-
-table thead {
-    background-color: #B9B9B9;
-}
-
-table tbody tr:nth-child(odd) {
-    background-color: #f9f9f9;
-}
-
-table tbody tr:nth-child(even) {
-    background-color: #fff;
-}
-
-input[type="text"], input[type="number"] {
-    width: 100%;
-    padding: 8px;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-    box-sizing: border-box;
-}
-
-/* Form Thêm Khách Hàng */
-#addCustomerForm {
-    width: 100%;
-    max-width: 600px;
-    margin: 0 auto;
-    padding: 20px;
-    background-color: #f9f9f9;
-    border-radius: 8px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    position: fixed;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    z-index: 1000; /* Đặt form lên trên lớp nền mờ */
-    display: none; /* Ẩn mặc định */
-}
-
-/* Các phần tử khác của form */
-#addCustomerForm h3 {
-    font-size: 2rem;
-    margin-bottom: 20px;
-    text-align: center;
-    color: #333;
-}
-
-#customerForm label {
-    display: block;
-    margin: 10px 0 5px;
-    font-size: 2rem;
-    font-weight: 500;
-    color: #333;
-}
-
-#customerForm input {
-    width: 100%;
-    padding: 10px;
-    margin: 5px 0 15px;
-    border: 1px solid #ddd;
-    border-radius: 4px;
-    font-size: 2rem;
-}
-
-/* Submit và Cancel */
-#customerForm button {
-    width: 48%;
-    padding: 10px;
-    margin-top: 10px;
-    border: none;
-    border-radius: 4px;
-    font-size: 2rem;
-    cursor: pointer;
-    transition: background-color 0.3s ease;
-}
-
-#customerForm button[type="submit"] {
-    background-color: #72C2AE;
-    color: white;
-}
-
-#customerForm button[type="submit"]:hover {
-    background-color: #72C2AE;
-}
-
-#customerForm button[type="button"] {
-    background-color: #b46169;
-    color: white;
-    float: right;
-}
-
-#customerForm button[type="button"]:hover {
-    background-color: #b46169;
+  margin: 0;
 }
 
 /* Style cho Menu Overlay */
 .open-menu {
-    background-color: #F1F1F1; 
-    color: #8d8686; 
-    font-size: 2rem; 
-    padding: 10px 20px;
-    border: 1px solid #9e9e9e;
-    border-radius: 999px;
-    cursor: pointer;
-    text-align: center;
-    font-weight: bold;
-    position: fixed; 
-    bottom: 50%; 
-    left: 20px; 
-    width: 50px; 
-    height: 50px;
-    z-index: 1006;
+  background-color: #f1f1f1;
+  color: #8d8686;
+  font-size: 1.5rem;
+  padding: 10px 20px;
+  border: 1px solid #9e9e9e;
+  border-radius: 999px;
+  cursor: pointer;
+  text-align: center;
+  font-weight: bold;
+  position: fixed;
+  bottom: 50%;
+  left: 20px;
+  width: 50px;
+  height: 50px;
+  z-index: 1006;
 }
- 
 
 .open-menu:hover {
-    background-color: #9e9e9e;
+  background-color: #9e9e9e;
 }
 
 .overlay {
-    position: fixed;
-    top: 60px; 
-    left: 0;
-    width: 100%;
-    height: calc(100vh - 60px); 
-    background-color: rgba(0, 0, 0, 0.5);
-    z-index: 1000; 
-    display: none;
+  position: fixed;
+  top: 60px;
+  left: 0;
+  width: 100%;
+  height: calc(100vh - 60px);
+  background-color: rgba(0, 0, 0, 0.5);
+  z-index: 1000;
+  display: none;
 }
 
-
 .menu-ovl {
-    width: 40%;
-    display: flex;
-    flex-direction: column;
-    justify-content: flex-start;
-    background-color: #f9f9f9;
-    padding: 30px 50px;
-    box-shadow: 2px 0 10px rgba(0, 0, 0, 0.1);
-    position: fixed;
-    top: 60px;
-    left: -30%;
-    height: calc(100vh - 60px);
-    z-index: 1005;
-    transition: left 0.3s ease;
-    overflow-y: auto; /* Thêm thanh cuộn dọc khi cần */
-    scrollbar-width: thin; /* Đặt độ rộng thanh cuộn */
-    scrollbar-color: #888 #f1f1f1; /* Màu thanh cuộn */
+  width: 40%;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  background-color: #f9f9f9;
+  padding: 30px 50px;
+  box-shadow: 2px 0 10px rgba(0, 0, 0, 0.1);
+  position: fixed;
+  top: 60px;
+  left: -30%;
+  height: calc(100vh - 60px);
+  z-index: 1005;
+  transition: left 0.3s ease;
+  overflow-y: auto; /* Thêm thanh cuộn dọc khi cần */
+  scrollbar-width: thin; /* Đặt độ rộng thanh cuộn */
+  scrollbar-color: #888 #f1f1f1; /* Màu thanh cuộn */
 }
 
 .menu-ovl::-webkit-scrollbar {
-    width: 8px; /* Độ rộng của thanh cuộn */
+  width: 8px; /* Độ rộng của thanh cuộn */
 }
 
 .menu-ovl::-webkit-scrollbar-thumb {
-    background-color: #888; /* Màu của phần thanh cuộn */
+  background-color: #888; /* Màu của phần thanh cuộn */
 }
 
 .menu-ovl::-webkit-scrollbar-track {
-    background-color: #f1f1f1; /* Màu của phần nền thanh cuộn */
+  background-color: #f1f1f1; /* Màu của phần nền thanh cuộn */
 }
 .menu-ovl button {
-    margin-left: 80px;
-    margin-bottom: 28px; 
-    padding: 10px 20px;
-    font-size: 2rem;
-    background-color: #EAEAEA;
-    color: #fff;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-    min-width: 291px;
-    height: 84px;
-    text-align: center;
-    transition: transform 0.3s ease, box-shadow 0.3s ease; 
+  margin-left: 80px;
+  margin-bottom: 28px;
+  padding: 10px 20px;
+  font-size: 1.4rem;
+  background-color: #eaeaea;
+  color: #fff;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  min-width: 291px;
+  height: 84px;
+  text-align: center;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
 
 .menu-ovl button:first-child {
-    margin-top: 20px; 
+  margin-top: 20px;
 }
 
 .menu-ovl button:last-child {
-    margin-bottom: 0; 
+  margin-bottom: 0;
 }
 
 .menu-ovl button a {
-    padding: 20px 30px;
-    color: #696969;
-    text-decoration: none;
-    font-size: 2.3rem;
-    font-weight: 500;
-    display: block;
+  padding: 20px 30px;
+  color: #696969;
+  text-decoration: none;
+  font-size: 2.3rem;
+  font-weight: 500;
+  display: block;
 }
 
 .menu-ovl button:hover {
-    transform: translateY(-5px); 
-    box-shadow: 0 8px 15px rgba(0, 0, 0, 0.3); 
-    background-color: #F5DD85; 
+  transform: translateY(-5px);
+  box-shadow: 0 8px 15px rgba(0, 0, 0, 0.3);
+  background-color: #f5dd85;
 }
 
-.button-btn{
-    display: flex;
-    gap: 15px;
-    margin-top: 10px;
+/* Edit page */
+.add-row-btn .edit {
+  width: 20px;
+  height: 20px;
 }
 
-.edit-btn,
-.done-btn {
+.add-row-btn {
+  margin-top: 16px;
+  background-color: #72c2ae;
+  color: white;
+  font-size: 2rem;
   padding: 10px 20px;
   border: none;
+  border-radius: 5px;
   cursor: pointer;
+  width: 5%;
+  text-align: center;
+  font-weight: bold;
 }
 
-/* Style cho nút Edit */
-.edit-btn {
-    padding: 10px 20px;
-    background-color: #3498db;
-    color: white;
-    border: none;
-    border-radius: 5px;
-    font-size: 1.6rem;
-    font-weight: bold;
-    cursor: pointer;
-    transition: background-color 0.3s ease, transform 0.2s ease;
-}
-
-.edit-btn:hover {
-    background-color: #217dbb;
-    transform: translateY(-3px);
-    box-shadow: 0 5px 10px rgba(0, 0, 0, 0.2);
-}
-
-/* Style cho nút Done */
-.done-btn {
-    padding: 10px 20px;
-    background-color: #95a5a6; /* Màu xám ban đầu */
-    color: white;
-    border: none;
-    border-radius: 5px;
-    font-size: 1.6rem;
-    font-weight: bold;
-    cursor: not-allowed; /* Đặt con trỏ chuột thành not-allowed */
-    transition: background-color 0.3s ease, transform 0.2s ease;
-}
-
-.done-btn:hover {
-    background-color: #7f8c8d; /* Màu xám tối hơn khi hover */
-    transform: translateY(-3px);
-    box-shadow: 0 5px 10px rgba(0, 0, 0, 0.2);
-}
-
-.done-btn.active {
-    background-color: #2ecc71; /* Màu ban đầu khi trở lại bình thường */
-    cursor: pointer;
-}
-
-.done-btn.active:hover {
-    background-color: #27ae60;
+.add-row-btn:hover {
+  background-color: #5fa68d;
 }
 
 /* Style cho toast */
-.toast, .toastError {
-    position: fixed;
-    top: 20px;
-    right: 20px;
-    color: white;
-    padding: 10px 20px;
-    border-radius: 5px;
-    font-size: 16px;
-    opacity: 0;
-    visibility: hidden;
-    transition: opacity 0.5s ease, visibility 0.5s ease;
-    z-index: 10001;
+.toast,
+.toastError {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  color: white;
+  padding: 10px 20px;
+  border-radius: 5px;
+  font-size: 16px;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.5s ease, visibility 0.5s ease;
+  z-index: 10001;
 }
 
-.toast.show, .toastError.show {
-    opacity: 1;
-    visibility: visible;
+.toast.show,
+.toastError.show {
+  opacity: 1;
+  visibility: visible;
 }
 
 .toast {
-    background-color: #28a745; 
+  background-color: #28a745;
 }
 
 .toastError {
-    background-color: #e33a3a; 
+  background-color: #e33a3a;
+}
+
+#addCustomerForm {
+  width: 100%;
+  max-width: 600px;
+  margin: 30px auto;
+  padding: 20px;
+  background-color: #f9f9f9;
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+#addCustomerForm h3 {
+  text-align: center;
+  font-family: "Poppins", sans-serif;
+  font-size: 24px;
+  color: #333;
+  margin-bottom: 20px;
+}
+
+#customerForm {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+label {
+  font-size: 14px;
+  font-weight: 500;
+  color: #555;
+}
+
+input {
+  padding: 10px;
+  font-size: 16px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  outline: none;
+  transition: border-color 0.3s ease;
+}
+
+input:focus {
+  border-color: #007bff;
+}
+
+button {
+  padding: 12px 20px;
+  font-size: 16px;
+  color: #fff;
+  background-color: #007bff;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+button:hover {
+  background-color: #0056b3;
+}
+
+#cancelButton {
+  background-color: #6c757d;
+}
+
+#cancelButton:hover {
+  background-color: #5a6268;
+}
+
+.rule-group {
+  display: flex;
+  align-items: center;
+  margin-top: 10px;
+  margin-bottom: 30px;
+}
+
+.rule-group label {
+  margin-right: 10px;
+}
+
+.radio-group {
+  display: flex;
+  align-items: center;
+  margin-left: 330px;
+  font-size: 1.2rem;
+}
+
+.radio-group label {
+  margin-right: 10px;
+}
+
+.radio-group input[type="radio"] {
+  margin-right: 15px;
+}
+
+#rule_no,
+#rule_yes {
+  font-size: 1.2rem;
+}
+
+.toast {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  padding: 10px 20px;
+  background-color: #4caf50;
+  color: white;
+  border-radius: 5px;
+  box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.2);
+  z-index: 9999;
+  animation: fade-in 0.5s ease, fade-out 1s 3s ease forwards;
+}
+
+@keyframes fade-in {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fade-out {
+  from {
+    opacity: 1;
+  }
+  to {
+    opacity: 0;
+  }
 }

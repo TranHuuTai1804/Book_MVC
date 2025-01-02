@@ -23,8 +23,8 @@ const getMaxCustomerId = async () => {
 const addCustomer = async (customer) => {
   const newId = (await getMaxCustomerId()) + 1;
 
-  const sql = `INSERT INTO Khach_hang (ID_khach_hang, Ten_khach_hang, So_dien_thoai, Dia_chi, Email, Gioi_tinh)
-               VALUES (?, ?, ?, ?, ?, ?)`;
+  const sql = `INSERT INTO Khach_hang (ID_khach_hang, Ten_khach_hang, So_dien_thoai, Dia_chi, Email, Gioi_tinh, Tien_no)
+               VALUES (?, ?, ?, ?, ?, ?, ?)`;
   await runQuery(sql, [
     newId,
     customer.name,
@@ -32,6 +32,7 @@ const addCustomer = async (customer) => {
     customer.address,
     customer.email,
     customer.gender,
+    0,
   ]);
   return newId;
 };

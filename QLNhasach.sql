@@ -41,7 +41,8 @@ CREATE TABLE Khach_hang (
     So_dien_thoai CHAR(11),
     Gioi_tinh CHAR(1),
     Email VARCHAR(30),
-    Dia_chi NVARCHAR(100)
+    Dia_chi NVARCHAR(100),
+    Tien_no DECIMAL(10, 2),
 );
 
 -- Tạo bảng Phieu_thu_tien
@@ -178,7 +179,7 @@ INSERT INTO Chi_tiet_phieu_nhap_sach (ID_Phieu, ID_Chi_tiet, ID_Sach, So_luong) 
 (22, 1, 22, 245),  
 (23, 1, 23, 180);
 
-INSERT INTO Khach_hang (Ten_khach_hang, So_dien_thoai, Gioi_tinh, Email, Dia_chi) VALUES  
+INSERT INTO Khach_hang (Ten_khach_hang, So_dien_thoai, Gioi_tinh, Email, Dia_chi, Tien_no) VALUES  
 ('Nguyễn Văn A', '0912345678', 'M', 'nguyenvana@gmail.com', 'Hà Nội'),  
 ('Trần Thị B', '0987654321', 'F', 'tranthib@yahoo.com', 'TP Hồ Chí Minh'),  
 ('Lê Văn C', '0932123456', 'M', 'levanc@outlook.com', 'Đà Nẵng'),  
