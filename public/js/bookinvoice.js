@@ -375,14 +375,14 @@ function checkCustomer() {
         document.getElementById('customer').value = data.name;
         document.getElementById('email').value = data.email;
         document.getElementById('address').value = data.address;
-      }
-      // Update the amount due based on the debt value
-      if (data.debt < 0) {
-        document.getElementById('amount-due').innerHTML = data.debt; // Show as 0 for negative debt
-        document.querySelector('.total-container h3:nth-child(1)').innerHTML = `Số tiền khách đang nợ: <span id="amount-due">${data.debt}</span> VNĐ`;
+        // Update the amount due based on the debt value
+        if (data.debt < 0) {
+          document.getElementById('amount-due').innerHTML = "0"; // Show as 0 for negative debt
+          document.querySelector('.form-group label[for="amount-due"]').innerHTML = `Số tiền khách đang nợ:`;
       } else {
-        document.getElementById('amount-due').innerHTML = data.debt; // Show positive debt
-        document.querySelector('.total-container h3:nth-child(1)').innerHTML = `Số tiền khách còn dư: <span id="amount-due">${data.debt}</span> VNĐ`;
+          document.getElementById('amount-due').innerHTML = data.debt; // Show positive debt
+          document.querySelector('.form-group label[for="amount-due"]').innerHTML = `Số tiền khách còn dư:`;
+      }
       }
     })
     .catch(error => {
