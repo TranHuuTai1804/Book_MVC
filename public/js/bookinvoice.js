@@ -376,6 +376,14 @@ function checkCustomer() {
         document.getElementById('email').value = data.email;
         document.getElementById('address').value = data.address;
       }
+      // Update the amount due based on the debt value
+      if (data.debt < 0) {
+        document.getElementById('amount-due').innerHTML = data.debt; // Show as 0 for negative debt
+        document.querySelector('.total-container h3:nth-child(1)').innerHTML = `Số tiền khách đang nợ: <span id="amount-due">${data.debt}</span> VNĐ`;
+      } else {
+        document.getElementById('amount-due').innerHTML = data.debt; // Show positive debt
+        document.querySelector('.total-container h3:nth-child(1)').innerHTML = `Số tiền khách còn dư: <span id="amount-due">${data.debt}</span> VNĐ`;
+      }
     })
     .catch(error => {
       console.error('Error:', error);
@@ -420,6 +428,7 @@ async function submitForm() {
     // Check customer debt
     const customerDebtResponse = await fetch(`/api/getCustomerDebt?phone=${data.phone}`);
     const customerDebt = await customerDebtResponse.json();
+    console.log(customerDebt.debt);
     let positiveDebt = 0;  // Initialize positiveDebt
 
     // Check if customerDebt.debt is negative
@@ -435,10 +444,6 @@ async function submitForm() {
       },
       body: JSON.stringify(data)
     });
-
-    console.log('SuDungQD4:', suDungQD4);
-    console.log('PositiveDebt:', positiveDebt);
-    console.log('Total Paid:', parseFloat(data.totalPaid));
 
     // Check totalPay against positiveDebt if Su_Dung_QD4 is true
     if (suDungQD4 && positiveDebt > 0 && parseFloat(data.totalPaid) > positiveDebt) {

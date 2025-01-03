@@ -524,3 +524,19 @@ label {
 .form-group-full-width button:hover {
     background-color: #0056b3; /* Darker on hover */
 }
+
+#amount-due {
+    font-weight: bold;
+    color: #d9534f; /* Red color for negative debt */
+    font-size: 1.2em;
+    margin-left: 10px;
+}
+
+.total-container h3 {
+    color: #333;
+    font-size: 1.5em;
+}
+
+.form-group {
+    margin-bottom: 15px;
+}
