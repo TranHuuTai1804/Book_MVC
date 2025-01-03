@@ -356,7 +356,7 @@ function checkCustomer() {
 
   // Check if the phone number is 10 digits long
   if (phoneInput.length !== 10 || isNaN(phoneInput)) {
-    alert("Vui lòng nhập số điện thoại gồm 10 chữ số.");
+    alert("Please enter a 10-digit phone number.");
     return;
   }
 
@@ -377,12 +377,12 @@ function checkCustomer() {
         document.getElementById('address').value = data.address;
         // Update the amount due based on the debt value
         if (data.debt < 0) {
-          document.getElementById('amount-due').innerHTML = "0"; // Show as 0 for negative debt
-          document.querySelector('.form-group label[for="amount-due"]').innerHTML = `Số tiền khách đang nợ:`;
-      } else {
+          document.getElementById('amount-due').innerHTML = data.debt; // Show as 0 for negative debt
+          document.querySelector('.form-group label[for="amount-due"]').innerHTML = `Amount Owed by Customer:`;
+        } else {
           document.getElementById('amount-due').innerHTML = data.debt; // Show positive debt
-          document.querySelector('.form-group label[for="amount-due"]').innerHTML = `Số tiền khách còn dư:`;
-      }
+          document.querySelector('.form-group label[for="amount-due"]').innerHTML = `Remaining Amount:`;
+        }
       }
     })
     .catch(error => {
@@ -405,7 +405,7 @@ async function submitForm() {
 
   // Example validation
   if (!customer || !address || !phone || !email || !totalPaid) {
-    alert('Vui lòng điền tất cả các trường!');
+    alert('Please fill in all fields!');
     return; // Exit function if validation fails
   }
 
@@ -447,16 +447,16 @@ async function submitForm() {
 
     // Check totalPay against positiveDebt if Su_Dung_QD4 is true
     if (suDungQD4 && positiveDebt > 0 && parseFloat(data.totalPaid) > positiveDebt) {
-      alert(`Tổng số tiền thanh toán không được lớn hơn nợ hiện tại (${positiveDebt} VNĐ).`);
+      alert(`The total payment cannot exceed the current debt (${positiveDebt} VNĐ).`);
       return;
     }
 
     // Check if the response is successful
     if (response.ok) {
       const result = await response.json();
-      alert('Thông tin đã được gửi thành công!');
+      alert('Information has been successfully submitted!');
     } else {
-      alert('Có lỗi xảy ra. Vui lòng thử lại.');
+      alert('An error occurred. Please try again.');
     }
   } catch (error) {
     console.error('Error:', error);

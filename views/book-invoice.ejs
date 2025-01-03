@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Book Invoice</title>
+    <title>Receipts</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link
@@ -20,45 +20,45 @@
 
         <!-- Block Book Entry Form -->
         <div class="book-entry-form">
-            <h2>Book Invoice</h2>
+            <h2>Receipts</h2>
         </div>
 
-        <!-- Tiêu đề Date -->
+        <!-- Title Date -->
         <div class="container">
             <div class="form-container">
                 <form id="receipt-form" class="two-column-form">
                     <div class="form-group">
-                        <label for="customer">Họ tên khách hàng:</label>
-                        <input type="text" id="customer" name="customer" placeholder="Nhập họ tên khách hàng" required>
+                        <label for="customer">Customer Name:</label>
+                        <input type="text" id="customer" name="customer" placeholder="Enter customer name" required>
                     </div>
                     <div class="form-group address-group">
-                        <label for="address">Địa chỉ:</label>
-                        <input type="text" id="address" name="address" placeholder="Nhập địa chỉ" required>
+                        <label for="address">Address:</label>
+                        <input type="text" id="address" name="address" placeholder="Enter address" required>
                     </div>
                     <div class="form-group">
-                        <label for="phone">Số điện thoại:</label>
-                        <input type="text" id="phone" name="phone" placeholder="Nhập số điện thoại"
+                        <label for="phone">Phone Number:</label>
+                        <input type="text" id="phone" name="phone" placeholder="Enter phone number"
                             onblur="checkCustomer()" required>
                     </div>
                     <div class="form-group">
                         <label for="email">Email:</label>
-                        <input type="email" id="email" name="email" placeholder="Nhập email" required>
+                        <input type="email" id="email" name="email" placeholder="Enter email" required>
                     </div>
                     <div class="form-group">
-                        <label for="date-receipt">Ngày thu tiền:</label>
-                        <input type="text" id="date-receipt" name="date-receipt" placeholder="Ngày thu tiền" readonly>
+                        <label for="date-receipt">Payment Date:</label>
+                        <input type="text" id="date-receipt" name="date-receipt" placeholder="Payment date" readonly>
                     </div>
                     <div class="form-group">
-                        <label for="total-paid">Tổng tiền thu:</label>
-                        <input type="number" id="total-paid" name="total-paid" placeholder="Nhập tổng tiền thu"
+                        <label for="total-paid">Total Amount Received:</label>
+                        <input type="number" id="total-paid" name="total-paid" placeholder="Enter total amount received"
                             required>
                     </div>
                     <div class="form-group">
-                        <label for="amount-due">Số tiền khách nợ:</label>
+                        <label for="amount-due">Amount Owed by Customer:</label>
                         <span id="amount-due">0</span> VNĐ
                     </div>
                     <div class="form-group-full-width">
-                        <button type="button" onclick="submitForm()">Gửi thông tin</button>
+                        <button type="button" onclick="submitForm()">Submit Information</button>
                     </div>
                 </form>
             </div>
@@ -71,9 +71,9 @@
         <!-- Menu Section -->
         <div id="hero-menu" class="menu-ovl" style="display: none;">
             <button><a href="/bookempty">Book Entry Form</a></button>
-            <button><a href="/bookinvoice">Book Invoice</a></button>
+            <button><a href="/bookinvoice">Receipt</a></button>
             <button><a href="lookup">Book Lookup</a></button>
-            <button><a href="/receipts">Receipt</a></button>
+            <button><a href="/receipts">Book Invoice</a></button>
             <button><a href="/report">Monthly Report</a></button>
             <button><a href="/edit">Edit Regulations</a></button>
         </div>

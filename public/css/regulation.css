@@ -290,7 +290,7 @@ input:focus {
   border-color: #007bff;
 }
 
-button {
+button #updateButton, button #cancelButton {
   padding: 12px 20px;
   font-size: 16px;
   color: #fff;

@@ -340,7 +340,8 @@ function checkQuantityInput(input) {
     input.style.borderColor = "red";
     input.style.backgroundColor = "#e8b5a7"; // Tô viền đỏ nếu chưa điền hoặc giá trị không hợp lệ
   } else {
-    input.style.borderColor = ""; // Xóa viền đỏ nếu giá trị hợp lệ
+    input.style.borderColor = "#000"; // Xóa viền đỏ nếu giá trị hợp lệ
+    input.style.backgroundColor = "";
   }
 }
 

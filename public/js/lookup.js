@@ -104,6 +104,7 @@ function display(result) {
   // Thêm danh sách vào resultIp
   resultIp.innerHTML = "<ul>" + content.join("") + "</ul>";
 }
+
 // Hàm khi người dùng chọn kết quả tìm kiếm
 async function selectInput(list) {
   // Cập nhật giá trị ô input với tên sách được chọn
@@ -131,9 +132,6 @@ async function selectInput(list) {
       // Hiển thị danh sách mặc định
       const bookContainer = document.querySelector(".book-container");
       bookContainer.innerHTML = ""; // Xóa nội dung cũ nếu có
-
-      // Sử dụng link từ cơ sở dữ liệu để hiển thị hình ảnh
-      const bookImage = selectedBook.Link; // Lấy link từ dữ liệu sách
 
       selectedBook.forEach((book) => {
         const bookItem = document.createElement("div");
@@ -175,6 +173,7 @@ async function selectInput(list) {
     console.error("Error fetching book details:", error);
   }
 }
+
 // Hàm hiển thị danh sách mặc định (tất cả các loại sách)
 async function showDefaultList() {
   try {
@@ -184,9 +183,6 @@ async function showDefaultList() {
       throw new Error("Failed to fetch books");
     }
     const books = await response.json();
-
-    // Lấy giá trị So_luong_ton_it_nhat từ quy định
-    const soLuongTonItHon = await fetchSoLuongTonItHon();
 
     // Hiển thị danh sách mặc định
     const bookContainer = document.querySelector(".book-container");
@@ -208,7 +204,7 @@ async function showDefaultList() {
         <div class="progress-container">
           <span class="progress-text">${book.So_luong}</span>
           <div class="progress-bar" style="width: ${
-            (book.So_luong / soLuongTonItHon) * 100
+            (book.So_luong / 100) * 100
           }%;"></div>
         </div>
       `;
@@ -369,29 +365,57 @@ document.addEventListener("DOMContentLoaded", () => {
   showDefaultList(); // Hiển thị tất cả các sách ngay khi trang tải
 });
 
+// Hàm để tải danh sách thể loại từ server và hiển thị trong dropdown
+function loadCategory() {
+  fetch("/api/books")
+    .then((response) => {
+      if (!response.ok) {
+        throw new Error("Failed to fetch categories");
+      }
+      return response.json();
+    })
+    .then((books) => {
+      // Lấy danh sách thể loại duy nhất
+      const categories = [...new Set(books.map((book) => book.The_loai))];
+
+      const categoryDropdown = document.getElementById("categoryDropdown");
+      categoryDropdown.innerHTML = ""; // Xóa danh sách cũ
+
+      categories.forEach((category) => {
+        const categoryButton = document.createElement("button");
+        categoryButton.classList.add("filter-btn");
+        categoryButton.textContent = category;
+        categoryButton.onclick = () =>
+          filterByCategory(category, categoryButton);
+        categoryDropdown.appendChild(categoryButton);
+      });
+    })
+    .catch((error) => console.error("Lỗi khi lấy danh sách thể loại:", error));
+}
+
 // Hàm hiển thị danh sách sách theo thể loại
-// async function filterByCategory(category, button) {
-//   try {
-//     // Gọi API để lấy tất cả sách
-//     const response = await fetch("/api/books");
-//     if (!response.ok) {
-//       throw new Error("Failed to fetch books");
-//     }
-//     const books = await response.json();
+async function filterByCategory(category, button) {
+  try {
+    // Gọi API để lấy tất cả sách
+    const response = await fetch("/api/books");
+    if (!response.ok) {
+      throw new Error("Failed to fetch books");
+    }
+    const books = await response.json();
 
     // Lọc sách theo thể loại
     const filteredBooks = books.filter((book) => book.The_loai === category);
 
-//     const bookContainer = document.querySelector(".book-container");
-//     bookContainer.innerHTML = ""; // Xóa nội dung cũ nếu có
+    const bookContainer = document.querySelector(".book-container");
+    bookContainer.innerHTML = ""; // Xóa nội dung cũ nếu có
 
-//     // Kiểm tra nếu không có sách nào
-//     if (filteredBooks.length === 0) {
-//       const noBooksMessage = document.createElement("p");
-//       noBooksMessage.textContent = "Không có sách trong danh mục này.";
-//       bookContainer.appendChild(noBooksMessage);
-//       return;
-//     }
+    // Kiểm tra nếu không có sách nào
+    if (filteredBooks.length === 0) {
+      const noBooksMessage = document.createElement("p");
+      noBooksMessage.textContent = "Không có sách trong danh mục này.";
+      bookContainer.appendChild(noBooksMessage);
+      return;
+    }
 
     // Tạo bảng danh sách sách
     filteredBooks.forEach((book) => {
@@ -421,11 +445,15 @@ document.addEventListener("DOMContentLoaded", () => {
       bookContainer.appendChild(bookItem);
     });
 
-//     // Cập nhật nút active
-//   } catch (error) {
-//     console.error("Error fetching books by category:", error);
-//   }
-// }
+    // Cập nhật nút active
+    document.querySelectorAll(".filter-btn").forEach((btn) => {
+      btn.classList.remove("active");
+    });
+    button.classList.add("active");
+  } catch (error) {
+    console.error("Error fetching books by category:", error);
+  }
+}
 
 // Hàm để tải danh sách tác giả từ server và hiển thị trong dropdown
 function loadAuthors() {
@@ -483,7 +511,9 @@ async function selectAuthor(authorName) {
       const bookItem = document.createElement("div");
       bookItem.className = "book-item";
       bookItem.innerHTML = `
-        <img src="/img/${bookImage}" alt="${book.Ten_sach}" class="book-image">
+        <img src="${book.img || "/book/book1.png"}" alt="${
+        book.Ten_sach
+      }" class="book-image">
         <h3 class="book-title">${book.Ten_sach}</h3>
         <p class="book-author">${book.Ten_tac_gia}</p>
         <p class="book-price">$${book.Gia}</p>
@@ -511,25 +541,17 @@ window.onload = () => {
 };
 
 // Hàm toggle dropdown cho thể loại
-function toggleCategoryDropdown() {
+function toggleDropdown() {
   const categoryDropdown = document.getElementById("categoryDropdown");
-  categoryDropdown.classList.toggle("show"); // Thêm hoặc xóa lớp 'show' để hiển thị/ẩn dropdown
+  categoryDropdown.classList.toggle("show");
 }
-
-// Hàm gọi khi trang web được tải
-window.onload = () => {
-  loadAuthors(); // Tải danh sách tác giả khi trang web tải
-  loadCategories(); // Tải danh sách thể loại khi trang web tải
-};
 
 // Hàm ẩn các dropdown khi người dùng click ra ngoài
 document.addEventListener("click", function (e) {
   const categoryDropdown = document.getElementById("categoryDropdown");
-  const authorDropdown = document.getElementById("authorDropdown");
 
   if (!e.target.closest(".dropdown")) {
     categoryDropdown.classList.remove("show");
-    authorDropdown.classList.remove("show");
   }
 });
 

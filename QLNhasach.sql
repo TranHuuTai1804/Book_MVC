@@ -11,7 +11,7 @@ CREATE TABLE Sach (
     Nam_xuat_ban INT,
     So_luong INT,
     Gia DECIMAL(10, 2),
-    Link NCHAR(40)
+    Link NCHAR(255)
 );
 
 -- Tạo bảng Phieu_nhap_sach

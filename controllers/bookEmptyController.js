@@ -69,7 +69,7 @@ const addBook = async (req, res) => {
       if (existingBook) {
         console.log("Sách cũ:", rows[0].Ten_sach)
         const currentQuantity = parseInt(rows[0].So_luong, 10);
-        const newQuantity = currentQuantity + book.quantity;
+        const newQuantity = currentQuantity;
 
         if (minStockLimit !== null && newQuantity > minStockLimit) {
           return res.redirect(
@@ -80,7 +80,7 @@ const addBook = async (req, res) => {
         }
 
         // Cập nhật số lượng sách
-        await bookEmpty.updateBookQuantity(rows[0].ID_sach, newQuantity);
+        await bookEmpty.updateBookQuantity(rows[0].ID_sach, newQuantity + book.quantity);
         id_sach = rows[0].ID_sach;
       } else {
         if (minStockLimit !== null && book.quantity > minStockLimit) {

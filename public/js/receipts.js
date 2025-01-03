@@ -80,10 +80,9 @@ function showToast(type) {
 
 async function addBook() {
   const bookId = document.getElementById('book-id').value.trim(); // Get and trim the input value
-
   // Check if the input is empty
   if (!bookId) {
-    alert('Vui lòng nhập ID sách hoặc tên sách.'); // Alert the user to enter a value
+    alert('Please enter a book ID or title.'); // Alert the user to enter a value
     return; // Exit the function if the input is empty
   }
 
@@ -94,7 +93,7 @@ async function addBook() {
     // Check if the response indicates that the book was not found
     if (!response.ok) {
       // Show a message if the book does not exist
-      alert('Không tìm thấy sách với ID hoặc tên này.'); // Alert the user that the book does not exist
+      alert('No book found with this ID or title.'); // Alert the user that the book does not exist
       return; // Exit the function
     }
 
@@ -102,7 +101,7 @@ async function addBook() {
 
     // Check if bookDatas is empty
     if (bookDatas.length === 0) {
-      alert('Không tìm thấy sách với ID hoặc tên này.'); // Alert the user that the book does not exist
+      alert('No book found with this ID or title.'); // Alert the user that the book does not exist
       return; // Exit the function
     }
 
@@ -260,7 +259,7 @@ async function submitForm() {
 
         // Check if positiveDebt exceeds maxDebt
         if (positiveDebt > maxDebt) {
-          alert(`Khách hàng nợ quá ${maxDebt} VNĐ. Không thể thực hiện giao dịch.`);
+          alert(`The customer owes more than ${maxDebt} VNĐ. Transaction cannot be processed.`);
           return;
         }
       }
@@ -283,7 +282,7 @@ async function submitForm() {
         const remainingStock = await stockResponse.json();
 
         if (remainingStock < 20) {
-          alert(`Số lượng tồn sau khi bán của sách ${book.Ten_sach} không đủ (tối thiểu 20).`);
+          alert(`The remaining quantity after selling the book ${book.Ten_sach} is insufficient (minimum 20).`);
           return;
         }
       }
@@ -307,7 +306,7 @@ async function submitForm() {
       // Optionally reset the form
       form.reset();
       sessionStorage.removeItem('books'); // Clear session storage after submitting
-      
+
       location.reload(); // This will refresh the current page
     } catch (error) {
       alert(error.message); // Show error message
@@ -323,7 +322,7 @@ function checkCustomer() {
 
   // Check if the phone number is 10 digits long
   if (phoneInput.length !== 10 || isNaN(phoneInput)) {
-    alert("Vui lòng nhập số điện thoại gồm 10 chữ số.");
+    alert("Please enter a 10-digit phone number.");
     return;
   }
 
@@ -346,10 +345,10 @@ function checkCustomer() {
         // Update the amount due based on the debt value
         if (data.debt < 0) {
           document.getElementById('amount-due').innerHTML = data.debt; // Show as 0 for negative debt
-          document.querySelector('.total-container h3:nth-child(1)').innerHTML = `Số tiền khách đang nợ: <span id="amount-due">${data.debt}</span> VNĐ`;
+          document.querySelector('.total-container h3:nth-child(1)').innerHTML = `Amount Due: <span id="amount-due">${data.debt}</span> VNĐ`;
         } else {
           document.getElementById('amount-due').innerHTML = data.debt; // Show positive debt
-          document.querySelector('.total-container h3:nth-child(1)').innerHTML = `Số tiền khách còn dư: <span id="amount-due">${data.debt}</span> VNĐ`;
+          document.querySelector('.total-container h3:nth-child(1)').innerHTML = `Remaining Amount: <span id="amount-due">${data.debt}</span> VNĐ`;
         }
       }
     })
